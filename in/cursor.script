@@ -1,0 +1,128 @@
+--- Attach this script to a game object that should act as a cursor
+-- The game object should at a minimum have a kinematic collision object
+-- with a group and mask that matches other collision objects that should
+-- be able to interact with the cursor.
+--
+-- The script has the following properties:
+--	* action_id - (hash) The action_id that corresponds to a press/click/interact action
+--	* drag - (boolean) If the cursor should be able to drag game objects
+--	* drag_threshold - (number) Distance the cursor has to move from a pressed object before it's considered dragged
+--	* acquire_input_focus - (boolean) Check if the script should acquire input and handle input events itself
+--
+-- You can let the cursor react to input in several ways:
+--	* Enable the acquire_input_focus property. This will make the script automatically responding to input events
+--	* Pass "input" messages. This will feed inout events from an external source. This is useful if the app uses
+--	a camera solution or render script where screen coordinates doesn't translate to world coordinates and where
+-- 	conversion is required (using a screen_to_world function or similar).
+--
+-- The script will generate messages to game objects for the following situations:
+--	* cursor_over - The cursors moves over the game object
+--	* cursor_out - The cursor moves out from the game object
+--	* pressed - When pressing the game object
+--	* released - When releasing the game object
+--	* drag_start - When starting to drag the game object
+--	* drag_end - When no longer draggin the game object
+
+go.property("action_id", hash("touch"))
+go.property("drag", true)
+go.property("drag_threshold", 20)
+go.property("acquire_input_focus", false)
+
+local COLLISION_RESPONSE = hash("collision_response")
+local INPUT = hash("input")
+
+local function handle_input(self, action_id, action)
+	if not action_id or action_id == self.action_id then
+		go.set_position(vmath.vector3(action.x, action.y, 0))
+
+		if action.pressed then
+			self.pressed = true
+		elseif action.released then
+			self.released = true
+		end
+	end
+end
+
+function init(self)
+	if self.acquire_input_focus then
+		msg.post(".", "acquire_input_focus")
+	end
+
+	self.collision_id = nil
+	self.pressed = false
+	self.released = false
+
+	self.state = {
+		pressed = false,
+		dragging = false,
+		dragged_id = nil,
+		dragged_pos = nil,
+		over_id = nil,
+	}
+end
+
+function update(self, dt)
+	local pos = go.get_position()
+	
+	if self.released and self.state.pressed then
+		if self.state.dragging then
+			self.state.dragging = false
+			msg.post(self.state.pressed_id, "drag_end")
+		end
+		msg.post(self.state.pressed_id, "released")
+		self.state.pressed = false
+		self.state.pressed_id = nil
+	end
+
+	if self.state.over_id and self.state.over_id ~= self.collision_id then
+		msg.post(self.state.over_id, "cursor_out")
+		self.state.over_id = nil
+	end
+
+	if self.collision_id and self.state.over_id ~= self.collision_id then
+		self.state.over_id = self.collision_id
+		msg.post(self.state.over_id, "cursor_over")
+	end
+
+	if self.pressed and not self.state.pressed and self.state.over_id then
+		self.state.pressed = true
+		self.state.pressed_id = self.state.over_id
+		self.state.pressed_pos = go.get_position()
+		msg.post(self.state.pressed_id, "pressed")
+	end
+
+	if self.drag and self.state.pressed and not self.state.dragging then
+		local distance = vmath.length(pos - self.state.pressed_pos)
+		if distance >= self.drag_threshold then
+			self.state.dragging = true
+			msg.post(self.state.pressed_id, "drag_start")
+		end
+	end
+
+	if self.state.dragging then
+		go.set_position(pos, self.state.pressed_id)
+	end
+
+	self.collision_id = nil
+	self.pressed = false
+	self.released = false
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == COLLISION_RESPONSE then
+		if not self.collision_id or go.get_position(self.collision_id).z < message.other_position.z then
+			self.collision_id = message.other_id
+		end
+	elseif message_id == INPUT then
+		handle_input(self, message.action_id, message.action)
+	end
+end
+
+function on_input(self, action_id, action)
+	handle_input(self, action_id, action)
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Remove this function if not needed
+end

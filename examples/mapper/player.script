@@ -1,0 +1,49 @@
+local input_state = require "in.state"
+local input_mapper = require "in.mapper"
+local actions = require "examples.mapper.actions"
+
+go.property("speed", 200)
+
+local function play_animation(self, animation)
+	if self.current_animation ~= animation then
+		msg.post("#sprite", "play_animation", { id = animation })
+		self.current_animation = animation
+	end
+end
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	self.input_state = input_state.create()
+	self.current_animation = nil
+end
+
+function update(self, dt)
+	local pos = go.get_position()
+	if self.input_state.is_pressed(actions.LEFT) then
+		pos = pos + vmath.vector3(-1, 0, 0) * self.speed * dt
+		sprite.set_hflip("#sprite", true)
+		play_animation(self, hash("green_player_walk"))
+	elseif self.input_state.is_pressed(actions.RIGHT) then
+		pos = pos + vmath.vector3(1, 0, 0) * self.speed * dt
+		sprite.set_hflip("#sprite", false)
+		play_animation(self, hash("green_player_walk"))
+	else
+		play_animation(self, hash("green_player_idle"))
+	end
+	go.set_position(pos)
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("on_input") then
+		self.input_state.on_input(message.action_id, message.action)
+	end
+end
+
+function on_input(self, action_id, action)
+	self.input_state.on_input(input_mapper.on_input(action_id, self.player_id), action)
+end
+
+function on_reload(self)
+    -- Add reload-handling code here
+    -- Remove this function if not needed
+end

@@ -1,0 +1,37 @@
+[project]
+title = Defold-Input
+version = 0.1
+dependencies = https://github.com/britzl/deftest/archive/master.zip
+
+[bootstrap]
+main_collection = /examples/examples.collectionc
+render = /builtins/render/default.renderc
+
+[input]
+game_binding = /in/bindings/all.input_bindingc
+gamepads = /in/gamepads/in.gamepadsc
+
+[display]
+width = 1280
+height = 720
+
+[physics]
+scale = 0.02
+debug = 0
+gravity_y = 0
+
+[script]
+shared_state = 1
+
+[library]
+include_dirs = in
+
+[graphics]
+max_debug_vertices = 50000
+
+[collection_proxy]
+max_count = 16
+
+[sprite]
+max_count = 2000
+

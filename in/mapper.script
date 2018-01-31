@@ -1,0 +1,17 @@
+local mapper = require "in.mapper"
+
+go.property("player_id", 1)
+go.property("acquire_input_focus", false)
+
+function init(self)
+	self.message = {}
+end
+
+function on_input(self, action_id, action)
+	local action_id = mapper.on_input(action_id, self.player_id)
+	if action_id then
+		self.message.action_id = action_id
+		self.message.action = action
+		msg.post(".", "on_input", self.message)
+	end
+end

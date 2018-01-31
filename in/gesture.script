@@ -1,0 +1,35 @@
+local gesture = require "in.gesture"
+
+go.property("action_id", hash("touch"))
+go.property("tap_threshold", 20)
+go.property("double_tap_interval", 0.5)
+go.property("swipe_threshold", 20)
+go.property("swipe_time", 20)
+go.property("long_press_time", 20)
+go.property("acquire_input_focus", false)
+
+function init(self)
+	self.gesture = gesture.create({
+		action_id = self.action_id,
+		tap_threshold = self.tap_threshold,
+		double_tap_interval = self.double_tap_interval,
+		swipe_threshold = self.swipe_threshold,
+		swipe_time = self.swipe_time,
+		ong_press_time = self.long_press_time,
+	})
+	if self.acquire_input_focus then
+		msg.post(".", "acquire_input_focus")
+	end
+end
+
+function on_input(self, action_id, action)
+	local g = self.gesture.on_input(action_id, action)
+	if g then
+		msg.post(".", "on_gesture", g)
+	end
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Remove this function if not needed
+end
