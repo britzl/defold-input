@@ -1,3 +1,4 @@
+# Mapper
 Use the Mapper module to map action ids to in-game actions. This makes it very easy to allow the user to rebind keys or to assign different sets of input for the same actions in a multiplayer game.
 
 # Using mapper.lua

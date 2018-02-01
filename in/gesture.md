@@ -1,8 +1,8 @@
 # Gestures
 Use the Gesture module to detect gestures such as swipes, long press and double tap. There are two different ways of using the Gesture module:
 
-## 1 - Using gesture.script
-Attach the gesture.script to the game object that should detect gestures. Configure the script properties if necessary. When a gesture is detected the script will generate an "on_gesture" message and send that to the game object.
+# 1 - Using gesture.script
+Attach the ```gesture.script``` to the game object that should detect gestures. Configure the script properties if necessary. When a gesture is detected the script will generate an "on_gesture" message and send that to the game object.
 
 	function on_message(self, message_id, message, sender)
 		if message_id == hash("on_gesture") then
@@ -18,13 +18,16 @@ Attach the gesture.script to the game object that should detect gestures. Config
 		end
 	end
 
-## 2 - Using gesture.lua
-Using the gesture module give you full control but requires a couple more lines of code to get started with:
+Configuration of the Gesture module when using the ```gesture.script``` is done via the exposed script properties. Select the script when it's attached to a game object and modify the settings from the Properties panel of the editor. See Configuration Options below.
+
+# 2 - Using gesture.lua
+Using the gesture module give you full control but requires a couple of lines of code to get started with:
 
 	local gesture = require "in.gesture"
 
 	function init(self)
 		msg.post(".", "acquire_input_focus")
+		gesture.SETTINGS.double_tap_interval = 1
 	end
 
 	function on_input(self, action_id, action)
@@ -42,28 +45,31 @@ Using the gesture module give you full control but requires a couple more lines 
 		end
 	end
 
-### Configuration
-The Gesture module expects action_id "touch" by default. This and some other configurable values can be changed:
-
-	local gesture = require "in.gesture"
-
-	function init(self)
-		gesture.SETTINGS.action_id = hash("interact")	-- Use action_id "interact" to detect gestures
-		gesture.SETTINGS.double_tap_interval = 1		-- max 1 second between clicks
-		gesture.SETTINGS.long_press_time = 2			-- min 2 seconds for a long press
-		gesture.SETTINGS.swipe_threshold = 100			-- min 100 pixels before considering it a swipe
-	end
-
-### Using multiple gesture detectors
 It's possible to create multiple gesture detectors where each detector has unique settings:
 
 	local gesture = require "in.gesture"
 
 	function init(self)
-		self.gestures = gesture.create({
+		self.gesture = gesture.create({
 			action_id = hash("interact"),
 			double_tap_interval = 1,
 			long_press_time = 2,
 			swipe_threshold = 100,
 		})
 	end
+
+	function on_input(self, action_id, action)
+		local g = self.gesture.on_input(self, action_id, action)
+		if g then
+			-- handle gestures here
+		end
+	end
+
+# Configuration
+The Gesture module has the following configuration options:
+
+* ```action_id``` - (hash) The action_id to use when detecting gestures (default: "touch")
+* ```double_tap_interval``` - (number) Maximum time in seconds between two taps to consider it as a double tap (default: 0.5)
+* ```long_press_time``` - (number) Minimum time in seconds before a tap is considered a long press (default: 0.5)
+* ```swipe_threshold``` - (number) Minimum distance in pixels before considering it a swipe (default: 100)
+* ```tap_threshold``` - (number) Maximum distance in pixels between a press and release action to consider it a tap (default: 20)
