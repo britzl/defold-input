@@ -1,3 +1,5 @@
+--- Refer to mapper.md for documentation
+
 local mapper = require "in.mapper"
 
 go.property("player_id", 1)

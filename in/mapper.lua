@@ -1,6 +1,4 @@
---- Map keys, gamepads to in-game actions in a convenient way. This allows a game to provide
--- different sets of key bindings for multiple players and to easily rebind default key bindings
--- See example for usage.
+--- Refer to mapper.md for documentation
 
 local M = {}
 

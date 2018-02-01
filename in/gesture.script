@@ -1,3 +1,5 @@
+--- Refer to gesture.md for documentation
+
 local gesture = require "in.gesture"
 
 go.property("action_id", hash("touch"))

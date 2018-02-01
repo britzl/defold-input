@@ -1,36 +1,11 @@
---- Gesture detection module that can be used to detect gestures such as tap, double tap,
--- long press and swipe
--- @usage
---
---	local gesture = require "in.gesture"
---
---	function on_input(self, action_id, action)
---		local g = gesture.on_input(self, action_id, action)
---		if g.tap then
---			print("Single tap detected")
---		elseif g.double_tap then
---			print("Double tap detected")
---		elseif g.long_press then
---			print("Long-press detected")
---		elseif g.swipe_left then
---			print("Swipe left detected")
---		elseif g.swipe_right then
---			print("Swipe right detected")
---		elseif g.swipe_up then
---			print("Swipe up detected")
---		elseif g.swipe_down then
---			print("Swipe down detected")
---		end
---	end
---
-
+--- Refer to gesture.md for documentation
 
 local M = {}
 
 M.SETTINGS = {
 	--- the action to use when detecting gestures
 	action_id = hash("touch"),
-	
+
 	--- maximum distance between a pressed and release action to consider it a tap
 	tap_threshold = 20,
 
@@ -60,7 +35,7 @@ function M.create(settings)
 	settings.swipe_threshold = settings.swipe_threshold or M.SETTINGS.swipe_threshold
 	settings.swipe_time = settings.swipe_time or M.SETTINGS.swipe_time
 	settings.long_press_time = settings.long_press_time or M.SETTINGS.long_press_time
-	
+
 	local instance = {}
 
 	local tap = {
@@ -83,8 +58,8 @@ function M.create(settings)
 	local pressed_time
 	local released_time
 	local potential_double_tap
-	
-	
+
+
 	function instance.on_input(action_id, action)
 		if action_id ~= settings.action_id then
 			return
