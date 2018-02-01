@@ -1,8 +1,8 @@
 # Gestures
-Use the Gesture module to detect gestures such as swipes, long press and double tap. There are two different ways of using the Gesture module:
+Use the Gesture module to detect gestures such as swipes, long press and double tap. You can use the Gesture module either via the ```gesture.script``` or directly via ```gesture.lua```.
 
-# 1 - Using gesture.script
-Attach the ```gesture.script``` to the game object that should detect gestures. Configure the script properties if necessary. When a gesture is detected the script will generate an "on_gesture" message and send that to the game object.
+# Using gesture.script
+Attach the ```gesture.script``` to the game object that should detect gestures. Configure the script properties if necessary. When a gesture is detected the script will generate an ```on_gesture``` message and send that to the game object.
 
 	function on_message(self, message_id, message, sender)
 		if message_id == hash("on_gesture") then
@@ -18,10 +18,10 @@ Attach the ```gesture.script``` to the game object that should detect gestures. 
 		end
 	end
 
-Configuration of the Gesture module when using the ```gesture.script``` is done via the exposed script properties. Select the script when it's attached to a game object and modify the settings from the Properties panel of the editor. See Configuration Options below.
+Configuration of the Gesture module when using the ```gesture.script``` is done via the exposed script properties. Select the script when it's attached to a game object and modify the settings from the Properties panel of the editor. See [Configuration](#Configuration) below.
 
-# 2 - Using gesture.lua
-Using the gesture module give you full control but requires a couple of lines of code to get started with:
+# Using gesture.lua
+Using the gesture module directly gives you full control but requires a couple of lines of code to get started with:
 
 	local gesture = require "in.gesture"
 
@@ -64,6 +64,8 @@ It's possible to create multiple gesture detectors where each detector has uniqu
 			-- handle gestures here
 		end
 	end
+
+Configuration is done via the ```gesture.SETTINGS.*``` table or via a settings table passed into ```gesture.create(settings)```. In both cases the accepted configuration values can be seen in the [Configuration section](#Configuration).
 
 # Configuration
 The Gesture module has the following configuration options:
