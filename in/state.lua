@@ -1,57 +1,4 @@
---- Module to keep track of pressed and released states for all
--- input that it receives.
---
--- @usage
---
--- -- Alternative with a global state tracker
--- -- script1
--- local input_state = require "in.state"
--- 
--- function init(self)
--- 	input_state.acquire()
--- end
--- 
--- function final(self)
--- 	input_state.release()
--- end
--- 
--- function update(self, dt)
--- 	if input_state.is_pressed(hash("left")) then
--- 		go.set_position(go.get_position() - vmath.vector3(50, 0, 0) * dt)
--- 	elseif input_state.is_pressed(hash("right")) then
--- 		go.set_position(go.get_position() + vmath.vector3(50, 0, 0) * dt)
--- 	end
--- end
--- 
--- function on_input(self, action_id, action)
--- 	input_state.on_input(action_id, action)
--- end
---
--- -- Alternative with a script local state tracker
--- -- script2
--- local input_state = require "in.state"
--- 
--- function init(self)
---	self.input_state = input_state.create()
--- 	self.input_state.acquire()
--- end
--- 
--- function final(self)
--- 	self.input_state.release()
--- end
--- 
--- function update(self, dt)
--- 	if self.input_state.is_pressed(hash("left")) then
--- 		go.set_position(go.get_position() - vmath.vector3(50, 0, 0) * dt)
--- 	elseif self.input_state.is_pressed(hash("right")) then
--- 		go.set_position(go.get_position() + vmath.vector3(50, 0, 0) * dt)
--- 	end
--- end
--- 
--- function on_input(self, action_id, action)
--- 	self.input_state.on_input(action_id, action)
--- end
---
+--- Refer to state.md for documentation
 
 local M = {}
 
@@ -99,7 +46,7 @@ function M.create()
 			end
 		end
 	end
-	
+
 	return instance
 end
 
