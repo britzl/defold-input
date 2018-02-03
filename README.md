@@ -5,6 +5,9 @@ Defold-Input contains a number of different Lua modules and scripts to simplify 
 * [Cursor](in/cursor.md)
 * [State](in/state.md)
 
+# Gooey
+For a complete and easily skinnable UI system that supports buttons, checkboxes, input fields and lists please take a look at [Gooey](https://github.com/britzl/gooey).
+
 # Gamepads
 This project contains a gamepads definition file with the following gamepads configured:
 

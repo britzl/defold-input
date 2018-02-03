@@ -1,4 +1,4 @@
-local gui_input = require "in.gui"
+local button = require "in.button"
 
 local function load_example(self, proxy)
 	gui.set_enabled(gui.get_node("buttons"), false)
@@ -16,11 +16,11 @@ end
 
 function init(self)
 	msg.post("@render:", "clear_color", { color = vmath.vector4(0.15, 0.2, 0.3, 1.0) })
-	gui_input.acquire()
+	button.acquire()
 
 	gui.set_enabled(gui.get_node("back/button"), false)
-	
-	gui_input.register("back/button", function()
+
+	button.register("back/button", function()
 		unload_example(self)
 	end)
 
@@ -29,19 +29,19 @@ function init(self)
 	}
 
 	for _,example in ipairs(examples) do
-		gui_input.register(example .. "/button", function()
+		button.register(example .. "/button", function()
 			load_example(self, "#" .. example .. "proxy")
 		end)
 	end
 end
 
 function final(self)
-	gui_input.release()
-	gui_input.unregister()
+	button.release()
+	button.unregister()
 end
 
 function on_input(self, action_id, action)
-	gui_input.on_input(action_id, action)
+	button.on_input(action_id, action)
 end
 
 function on_message(self, message_id, message, sender)
