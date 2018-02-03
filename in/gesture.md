@@ -18,7 +18,7 @@ Attach the ```gesture.script``` to the game object that should detect gestures. 
 		end
 	end
 
-Configuration of the Gesture module when using the ```gesture.script``` is done via the exposed script properties. Select the script when it's attached to a game object and modify the settings from the Properties panel of the editor. See [Configuration](#Configuration) below.
+Configuration of the Gesture module when using the ```gesture.script``` is done via the exposed script properties. Select the script when it's attached to a game object and modify the settings from the Properties panel of the editor. See [Configuration](#configuration).
 
 # Using gesture.lua
 Using the gesture module directly gives you full control but requires a couple of lines of code to get started with:
@@ -65,7 +65,7 @@ It's possible to create multiple gesture detectors where each instance has uniqu
 		end
 	end
 
-Configuration is done via the ```gesture.SETTINGS.*``` table or via a settings table passed into ```gesture.create(settings)```. In both cases the accepted configuration values can be seen in the [Configuration section](#Configuration).
+Configuration is done via the ```gesture.SETTINGS.*``` table or via a settings table passed into ```gesture.create(settings)```. In both cases the accepted configuration values can be seen in the [Configuration section](#configuration).
 
 # Configuration
 The Gesture module has the following configuration options:
