@@ -1,11 +1,11 @@
 # Mapper
 Use the Mapper module to map action ids to in-game actions. This makes it very easy to allow the user to rebind keys or gamepad button or to assign different sets of input for the same actions in a multiplayer game.
 
-# Binding all available inputs to actions
+# Input bindings
 In order to allow players to bind in-game actions to any key or gamepad button it is recommended to use an ```*.input_bindings``` file where each Input is bound to an Action. The [all.input_bindings](in/bindings/all-input_bindings) does this and it's recommended to use this file together with the Mapper module.
 
-# Bind actions/keys to in-game action bindings
-Use the Mapper to define how incoming actions should translate to in-game actions. In the example below key bindings are defined for two players. For player one the KEY_LEFT and KEY_RIGHT (ie cursor keys) are bound to the in-game actions "move_left" and "move_right". For player two it is the "A" and "D" keys that are bound to the same in-game actions.
+# Bind actions to in-game actions
+Use the Mapper to define how incoming actions should translate to in-game actions. In the example below key bindings are defined for two players. For player one the KEY_LEFT and KEY_RIGHT (ie cursor keys) keys are bound to the in-game actions "move_left" and "move_right". For player two it is the "A" and "D" keys that are bound to the same in-game actions.
 
 	local mapper = require "in.mapper"
 

@@ -6,15 +6,15 @@ Attach the ```cursor.script``` to a game object that should act as a cursor. The
 
 The script has the following properties:
 
-* ```action_id``` - (hash) The action_id that corresponds to a press/click/interact action
+* ```action_id``` - (hash) The action_id that corresponds to a press/click/interact action (default: "touch")
 * ```drag``` - (boolean) If the cursor should be able to drag game objects
 * ```drag_threshold``` - (number) Distance the cursor has to move from a pressed object before it's considered dragged
 * ```acquire_input_focus``` - (boolean) Check if the script should acquire input and handle input events itself
 
 You can let the cursor react to input in several ways:
 
-* Enable the ```acquire_input_focus``` property. This will make the script automatically responding to input events
-* Pass "input" messages. This will feed input events from an external source. This is useful if the app uses a camera solution or render script where screen coordinates doesn't translate to world coordinates and where conversion is required (using a screen_to_world function or similar).
+* Enable the ```acquire_input_focus``` property. This will make the script automatically respond to input events
+* Pass ```input``` messages. This will feed input events from an external source. This is useful if the app uses a camera solution or render script where screen coordinates doesn't translate to world coordinates and where conversion is required (using a screen_to_world function or similar).
 
 The script will generate messages to game objects for the following situations:
 

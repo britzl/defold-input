@@ -2,7 +2,7 @@
 Use the State module to keep track of the current state of actions such as if a key or game pad button is pressed or not.
 
 # Usage
-You can either use State module in two ways. One is to use the global State module:
+You can use the State module in two ways. One is to use the global State module:
 
 	local state = require "in.state"
 

@@ -45,7 +45,7 @@ Using the gesture module directly gives you full control but requires a couple o
 		end
 	end
 
-It's possible to create multiple gesture detectors where each detector has unique settings:
+It's possible to create multiple gesture detectors where each instance has unique settings:
 
 	local gesture = require "in.gesture"
 
