@@ -5,7 +5,7 @@ local function prettify(t, indentation)
 		if type(v) == "table" then
 			s = s .. ("%s%s = {\n%s},\n"):format(indentation, k, prettify(v, indentation .. "  "))
 		else
-			s = s .. ("%s%s = %s,\n"):format(indentation, k, v)
+			s = s .. ("%s%s = %s,\n"):format(indentation, k, tostring(v))
 		end
 	end
 	return s
