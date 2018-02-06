@@ -6,6 +6,9 @@ Defold-Input contains a number of different Lua modules and scripts to simplify 
 * [State](in/state.md)
 * [Button](in/button.md)
 
+# Try HTML5 Demo
+You can try an HTML5 demo of Defold-Input here: https://britzl.github.io/Defold-Input/
+
 # Gooey
 For a complete and easily skinnable UI system that supports buttons, checkboxes, input fields and lists please take a look at [Gooey](https://github.com/britzl/gooey).
 
