@@ -17,7 +17,7 @@ function init(self)
 		double_tap_interval = self.double_tap_interval,
 		swipe_threshold = self.swipe_threshold,
 		swipe_time = self.swipe_time,
-		ong_press_time = self.long_press_time,
+		long_press_time = self.long_press_time,
 	})
 	if self.acquire_input_focus then
 		msg.post(".", "acquire_input_focus")
