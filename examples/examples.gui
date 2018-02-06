@@ -346,7 +346,7 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "MAPPER"
+  text: "MAPPER+STATE"
   font: "kenpixel15"
   id: "mapper/label"
   xanchor: XANCHOR_NONE
