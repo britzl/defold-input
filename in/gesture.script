@@ -7,7 +7,7 @@ go.property("tap_threshold", 20)
 go.property("double_tap_interval", 0.5)
 go.property("swipe_threshold", 20)
 go.property("swipe_time", 20)
-go.property("long_press_time", 20)
+go.property("long_press_time", 1.0)
 go.property("acquire_input_focus", false)
 
 function init(self)
