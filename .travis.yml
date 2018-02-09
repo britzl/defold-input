@@ -1,0 +1,27 @@
+sudo: required
+
+script:
+  - sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-5 /usr/bin/gcc
+  - gcc --version
+
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    packages:
+    - gcc-5
+    - g++-5
+
+language: java
+
+jdk:
+  - oraclejdk8
+
+env:
+  global:
+    secure: "sYTmAOdD9V2jkYCH3EY+dn5le4sgF1HdI+pbc18aHTci+5kyx4Npf1IQpFodqNsMp/vH5rgUAX2IS0OMYWM4Y7Yhy5zGPkopSVhACLKczhQcvc03dwQcIN5kJyfRu+hKy3CDSI/MqY4vnDdAcF0qdc6ewrvvZjVPf5kcFrHgCk9BJMGOPmbFqmzN+PjVldK80vwv3lF0zrWrr+5+lZjdhBGG+eO6wmfFkpPYIpQkACY7uF01MljCEqApqp4eeBQDjv1GkkG2hmj8IMd62uPPDJnVzQG7GZSpK6ib0468iFHTBNW55Q8yE/gZe5qz5lWapIt+NkGIlYj5DsODEo9R8jKC9F0PrhiSxMdluzZqja2cHetZa3wk5V023DWzgyTSCL0NSTyqQKKcd5GqMdAfdaeFCqs+PiHjAO9Mt2UdG9vJmHGFtls3WV9urdvhVLxyUS6RSXhWzXukzQ52tu1k6XNAfnH+4GsJy38d2LWagb2Z8ZJN3Ofg1sAAN8+iZkK/DpZ9UfPdl340GJK3KkCfLAMFNaoEnsuIdfaoDMZBA9susyjqcJU2C5FjMa/L7Hw9hhcKOy31wxT3vexB9anxXpsJUI5EKKv5ixs26XKLzMGvAfI53DeaqU4jIB8VqPCtR9Yw7da7ue396ZVxaCPjS0gCDjxjg95TeANytGvUOF8="
+    - DEFOLD_USER=bjorn.ritzl@king.com
+    - DEFOLD_BOOSTRAP_COLLECTION=/test/test.collectionc
+
+script:
+  - "./.test/run.sh"

@@ -1,0 +1,8 @@
+local test_state = require "test.test_state"
+
+local deftest = require "deftest.deftest"
+
+function init(self)
+	deftest.add(test_state)
+	deftest.run()
+end
