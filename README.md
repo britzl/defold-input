@@ -1,5 +1,3 @@
-[![Github All Releases](https://img.shields.io/github/downloads/britzl/defold-input/total.svg)](https://github.com/britzl/defold-input)
-
 # Defold-Input
 Defold-Input contains a number of different Lua modules and scripts to simplify input related operations such as gestures detection, user configurable key bindings, input state handling and dragging/clicking game objects.
 
