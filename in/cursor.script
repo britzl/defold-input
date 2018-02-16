@@ -38,10 +38,14 @@ function init(self)
 end
 
 local function notify_event(self, game_object_id, message_id)
-	msg.post(game_object_id, message_id)
-	if self.notify_own_gameobject then
-		msg.post(".", message_id, { id = game_object_id })
-	end
+	-- pcall to catch errors when posting to a game object that might have been deleted
+	-- typically a cursor_out message that is generated when the game object is deleted
+	pcall(function()
+		if self.notify_own_gameobject then
+			msg.post(".", message_id, { id = game_object_id })
+		end
+		msg.post(game_object_id, message_id)
+	end)
 end
 
 function update(self, dt)
