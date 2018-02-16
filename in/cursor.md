@@ -10,17 +10,18 @@ The script has the following properties:
 * ```drag``` - (boolean) If the cursor should be able to drag game objects
 * ```drag_threshold``` - (number) Distance the cursor has to move from a pressed object before it's considered dragged
 * ```acquire_input_focus``` - (boolean) Check if the script should acquire input and handle input events itself
+* ```notify_own_gameobject``` - (boolean) Check if cursor messages should be sent not only to the interacting game object but also to the game object this script is attached to.
 
 You can let the cursor react to input in several ways:
 
 * Enable the ```acquire_input_focus``` property. This will make the script automatically respond to input events
 * Pass ```input``` messages. This will feed input events from an external source. This is useful if the app uses a camera solution or render script where screen coordinates doesn't translate to world coordinates and where conversion is required (using a screen_to_world function or similar).
 
-The script will generate messages to game objects for the following situations:
+The script will generate messages to game objects the cursor is interacting with and to the game object the cursor script is attached to for the following situations:
 
 * ```cursor_over``` - The cursors moves over the game object
 * ```cursor_out``` - The cursor moves out from the game object
 * ```pressed``` - When pressing the game object
 * ```released``` - When releasing the game object
 * ```drag_start``` - When starting to drag the game object
-* ``drag_end`` - When no longer dragging the game object
+* ```drag_end``` - When no longer dragging the game object

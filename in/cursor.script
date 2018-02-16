@@ -4,6 +4,7 @@ go.property("action_id", hash("touch"))
 go.property("drag", true)
 go.property("drag_threshold", 20)
 go.property("acquire_input_focus", false)
+go.property("notify_own_gameobject", true)
 
 local COLLISION_RESPONSE = hash("collision_response")
 local INPUT = hash("input")
@@ -32,10 +33,15 @@ function init(self)
 	self.state = {
 		pressed = false,
 		dragging = false,
-		dragged_id = nil,
-		dragged_pos = nil,
 		over_id = nil,
 	}
+end
+
+local function notify_event(self, game_object_id, message_id)
+	msg.post(game_object_id, message_id)
+	if self.notify_own_gameobject then
+		msg.post(".", message_id, { id = game_object_id })
+	end
 end
 
 function update(self, dt)
@@ -44,35 +50,35 @@ function update(self, dt)
 	if self.released and self.state.pressed then
 		if self.state.dragging then
 			self.state.dragging = false
-			msg.post(self.state.pressed_id, "drag_end")
+			notify_event(self, self.state.pressed_id, "drag_end")
 		end
-		msg.post(self.state.pressed_id, "released")
+		notify_event(self, self.state.pressed_id, "released")
 		self.state.pressed = false
 		self.state.pressed_id = nil
 	end
 
 	if self.state.over_id and self.state.over_id ~= self.collision_id then
-		msg.post(self.state.over_id, "cursor_out")
+		notify_event(self, self.state.over_id, "cursor_out")
 		self.state.over_id = nil
 	end
 
 	if self.collision_id and self.state.over_id ~= self.collision_id then
 		self.state.over_id = self.collision_id
-		msg.post(self.state.over_id, "cursor_over")
+		notify_event(self, self.state.over_id, "cursor_over")
 	end
 
 	if self.pressed and not self.state.pressed and self.state.over_id then
 		self.state.pressed = true
 		self.state.pressed_id = self.state.over_id
 		self.state.pressed_pos = go.get_position()
-		msg.post(self.state.pressed_id, "pressed")
+		notify_event(self, self.state.pressed_id, "pressed")
 	end
 
 	if self.drag and self.state.pressed and not self.state.dragging then
 		local distance = vmath.length(pos - self.state.pressed_pos)
 		if distance >= self.drag_threshold then
 			self.state.dragging = true
-			msg.post(self.state.pressed_id, "drag_start")
+			notify_event(self, self.state.pressed_id, "drag_start")
 		end
 	end
 

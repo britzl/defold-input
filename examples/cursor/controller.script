@@ -1,0 +1,15 @@
+function on_message(self, message_id, message, sender)
+	if message_id == hash("cursor_over") then
+		print("Cursor over", message.id)
+	elseif message_id == hash("cursor_out") then
+		print("Cursor out", message.id)
+	elseif message_id == hash("pressed") then
+		print("Pressed", message.id)
+	elseif message_id == hash("released") then
+		print("Released", message.id)
+	elseif message_id == hash("drag_start") then
+		print("Drag started", message.id)
+	elseif message_id == hash("drag_end") then
+		print("Drag ended", message.id)
+	end
+end
