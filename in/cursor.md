@@ -2,7 +2,7 @@
 Use the cursor script to simplify user interaction such as clicking and dragging of game objects.
 
 # Usage
-Attach the ```cursor.script``` to a game object that should act as a cursor. The game object must have a kinematic collision object with a group and mask that matches other collision objects that should be able to interact with the cursor.
+Attach the ```cursor.script``` to a game object that should act as a cursor. The game object must have either a kinematic or trigger collision object with a group and mask that matches other collision objects that should be able to interact with the cursor.
 
 The script has the following properties:
 
