@@ -93,7 +93,7 @@ function M.create(settings)
 					gestures.double_tap = double_tap
 				end
 				if time < settings.long_press_time then
-					potential_double_tap = true
+					potential_double_tap = gestures.double_tap == nil
 					tap.position.x = action.x
 					tap.position.y = action.y
 					gestures.tap = tap
