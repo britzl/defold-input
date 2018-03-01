@@ -106,7 +106,12 @@ function on_message(self, message_id, message, sender)
 end
 
 function on_input(self, action_id, action)
-	handle_input(self, action_id, action)
+	-- we should only care about calls to on_input if we have specifically acquired input focus
+	-- if we haven't acquired input focus it is expected that input is sent via on_message from
+	-- some other script
+	if self.acquire_input_focus then
+		handle_input(self, action_id, action)
+	end
 end
 
 function on_reload(self)
