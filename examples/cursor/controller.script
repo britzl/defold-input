@@ -1,15 +1,28 @@
+function init(self)
+	if not go.get("#cursor", "acquire_input_focus") then
+		self.forward_input = true
+		msg.post(".", "acquire_input_focus")
+	end
+end
+
+function on_input(self, action_id, action)
+	if self.forward_input then
+		msg.post("#cursor", "input", { action_id = action_id, action = action })
+	end
+end
+
 function on_message(self, message_id, message, sender)
 	if message_id == hash("cursor_over") then
-		print("Cursor over", message.id)
+		print("Cursor over", message.id, message.group)
 	elseif message_id == hash("cursor_out") then
-		print("Cursor out", message.id)
+		print("Cursor out", message.id, message.group)
 	elseif message_id == hash("pressed") then
-		print("Pressed", message.id)
+		print("Pressed", message.id, message.group)
 	elseif message_id == hash("released") then
-		print("Released", message.id)
+		print("Released", message.id, message.group)
 	elseif message_id == hash("drag_start") then
-		print("Drag started", message.id)
+		print("Drag started", message.id, message.group)
 	elseif message_id == hash("drag_end") then
-		print("Drag ended", message.id)
+		print("Drag ended", message.id, message.group)
 	end
 end

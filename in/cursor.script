@@ -27,6 +27,7 @@ function init(self)
 	end
 
 	self.collision_id = nil
+	self.collision_group = nil
 	self.pressed = false
 	self.released = false
 
@@ -37,12 +38,12 @@ function init(self)
 	}
 end
 
-local function notify_event(self, game_object_id, message_id)
+local function notify_event(self, game_object_id, game_object_group, message_id)
 	-- pcall to catch errors when posting to a game object that might have been deleted
 	-- typically a cursor_out message that is generated when the game object is deleted
 	pcall(function()
 		if self.notify_own_gameobject then
-			msg.post(".", message_id, { id = game_object_id })
+			msg.post(".", message_id, { id = game_object_id, group = game_object_group })
 		end
 		msg.post(game_object_id, message_id)
 	end)
@@ -54,35 +55,39 @@ function update(self, dt)
 	if self.released and self.state.pressed then
 		if self.state.dragging then
 			self.state.dragging = false
-			notify_event(self, self.state.pressed_id, "drag_end")
+			notify_event(self, self.state.pressed_id, self.state.pressed_group, "drag_end")
 		end
-		notify_event(self, self.state.pressed_id, "released")
+		notify_event(self, self.state.pressed_id, self.state.pressed_group, "released")
 		self.state.pressed = false
 		self.state.pressed_id = nil
+		self.state.pressed_group = nil
 	end
 
 	if self.state.over_id and self.state.over_id ~= self.collision_id then
-		notify_event(self, self.state.over_id, "cursor_out")
+		notify_event(self, self.state.over_id, self.state.over_group, "cursor_out")
 		self.state.over_id = nil
+		self.state.over_group = nil
 	end
 
 	if self.collision_id and self.state.over_id ~= self.collision_id then
 		self.state.over_id = self.collision_id
-		notify_event(self, self.state.over_id, "cursor_over")
+		self.state.over_group = self.collision_group
+		notify_event(self, self.state.over_id, self.state.over_group, "cursor_over")
 	end
 
 	if self.pressed and not self.state.pressed and self.state.over_id then
 		self.state.pressed = true
 		self.state.pressed_id = self.state.over_id
+		self.state.pressed_group = self.state.over_group
 		self.state.pressed_pos = go.get_position()
-		notify_event(self, self.state.pressed_id, "pressed")
+		notify_event(self, self.state.pressed_id, self.state.pressed_group, "pressed")
 	end
 
 	if self.drag and self.state.pressed and not self.state.dragging then
 		local distance = vmath.length(pos - self.state.pressed_pos)
 		if distance >= self.drag_threshold then
 			self.state.dragging = true
-			notify_event(self, self.state.pressed_id, "drag_start")
+			notify_event(self, self.state.pressed_id, self.state.pressed_group, "drag_start")
 		end
 	end
 
@@ -91,6 +96,7 @@ function update(self, dt)
 	end
 
 	self.collision_id = nil
+	self.collision_group = nil
 	self.pressed = false
 	self.released = false
 end
@@ -99,6 +105,7 @@ function on_message(self, message_id, message, sender)
 	if message_id == COLLISION_RESPONSE then
 		if not self.collision_id or go.get_position(self.collision_id).z < message.other_position.z then
 			self.collision_id = message.other_id
+			self.collision_group = message.other_group
 		end
 	elseif message_id == INPUT then
 		handle_input(self, message.action_id, message.action)
