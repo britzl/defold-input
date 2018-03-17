@@ -1,0 +1,12 @@
+local prettify = require "examples.prettify"
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+end
+
+function on_input(self, action_id, action)
+	if action_id or (action.acc_x == 0 and action.acc_y == 0 and action.acc_z == 0) then
+		local s = prettify(action)
+		label.set_text("#input", tostring(action_id) .. "\n" .. s)
+	end
+end

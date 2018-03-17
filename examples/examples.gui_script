@@ -25,7 +25,7 @@ function init(self)
 	end)
 
 	local examples = {
-		"gesture", "mapper", "cursor",
+		"gesture", "mapper", "cursor", "tester"
 	}
 
 	for _,example in ipairs(examples) do

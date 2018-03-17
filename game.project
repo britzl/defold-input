@@ -35,3 +35,12 @@ max_count = 16
 [sprite]
 max_count = 2000
 
+[android]
+package = com.britzl.defold.input
+
+[osx]
+bundle_identifier = com.britzl.defold.input
+
+[ios]
+bundle_identifier = com.britzl.defold.input
+
