@@ -124,5 +124,20 @@ return function()
 			state2.on_input(action_id2, released)
 			assert(not state2.is_pressed(action_id2))
 		end)
+
+		it("should be able to clear any registered actions", function()
+			local action_id1 = hash("action1")
+			local action_id2 = hash("action2")
+			local pressed = { pressed = true }
+
+			state.on_input(action_id1, pressed)
+			state.on_input(action_id2, pressed)
+			assert(state.is_pressed(action_id1))
+			assert(state.is_pressed(action_id2))
+			
+			state.clear()
+			assert(not state.is_pressed(action_id1))
+			assert(not state.is_pressed(action_id2))
+		end)
 	end)
 end

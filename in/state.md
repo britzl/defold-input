@@ -43,3 +43,23 @@ The other way to use the State module is to create a unique instance. This is us
 	function on_input(self, action_id, action)
 		self.state.on_input(mapper.on_input(action_id, 1), action)
 	end
+
+# API
+
+### state.acquire()
+Acquire input focus
+
+### state.release()
+Release input focus
+
+### state.on_input(action_id, action)
+Register the state of an action_id
+
+### state.is_pressed(action_id)
+Check if an action_id is currently registered as pressed
+
+### state.clear()
+Clear the state of any registered actions
+
+### state.create()
+Create a unique instance of the state tracker

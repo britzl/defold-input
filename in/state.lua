@@ -47,6 +47,11 @@ function M.create()
 		end
 	end
 
+	--- Clear the state of any currently tracked input states
+	function instance.clear()
+		action_map = {}
+	end
+
 	return instance
 end
 
@@ -79,6 +84,11 @@ function M.update(action_id, action)
 end
 function M.on_input(action_id, action)
 	return instance.on_input(action_id, action)
+end
+
+--- Clear the state of any currently tracked input states
+function M.clear()
+	instance.clear()
 end
 
 return M
