@@ -1,5 +1,5 @@
 # Gestures
-Use the Gesture module to detect gestures such as swipes, long press and double tap. You can use the Gesture module either via the ```gesture.script``` or directly via ```gesture.lua```.
+Use the Gesture module to detect gestures such as swipes, long press and double tap. It also supports two finger gestures. You can use the Gesture module either via the ```gesture.script``` or directly via ```gesture.lua```.
 
 # Using gesture.script
 Attach the ```gesture.script``` to the game object that should detect gestures. Configure the script properties if necessary. When a gesture is detected the script will generate an ```on_gesture``` message and send that to the game object.
@@ -41,6 +41,10 @@ Using the gesture module directly gives you full control but requires a couple o
 				print(g.double_tap.position)
 			elseif g.long_press then
 				print(g.long_press.position, g.long_press.time)
+			elseif g.two_finger.tap then
+				print("Two finger tap!")
+			elseif g.two_finger.pinch then
+				print(g.two_finger.pinch.ratio, g.two_finger.center)
 			end
 		end
 	end
@@ -75,3 +79,4 @@ The Gesture module has the following configuration options:
 * ```long_press_time``` - (number) Minimum time in seconds before a tap is considered a long press (default: 0.5)
 * ```swipe_threshold``` - (number) Minimum distance in pixels before considering it a swipe (default: 100)
 * ```tap_threshold``` - (number) Maximum distance in pixels between a press and release action to consider it a tap (default: 20)
+* ```multi_touch``` - (boolean) If multi touch gestures should be handled or not (default: true)

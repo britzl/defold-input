@@ -149,7 +149,7 @@ embedded_instances {
   "pivot: PIVOT_SW\\n"
   "blend_mode: BLEND_MODE_ALPHA\\n"
   "line_break: true\\n"
-  "text: \\\"Touch, long-press, swipe, double tap\\\"\\n"
+  "text: \\\"Touch, long-press, swipe, double tap, pinch\\\"\\n"
   "font: \\\"/examples/assets/fonts/kenpixel15.font\\\"\\n"
   "material: \\\"/builtins/fonts/label.material\\\"\\n"
   "\"\n"
