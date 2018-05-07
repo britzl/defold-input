@@ -12,8 +12,8 @@ game_binding = /in/bindings/all.input_bindingc
 gamepads = /in/gamepads/in.gamepadsc
 
 [display]
-width = 1280
-height = 720
+width = 1136
+height = 640
 
 [physics]
 scale = 0.02
@@ -37,6 +37,7 @@ max_count = 2000
 
 [android]
 package = com.britzl.defold.input
+input_method = HiddenInputField
 
 [osx]
 bundle_identifier = com.britzl.defold.input
