@@ -20,6 +20,9 @@ function on_message(self, message_id, message, sender)
 		print("Pressed", message.id, message.group)
 	elseif message_id == hash("released") then
 		print("Released", message.id, message.group)
+		if message.group == hash("blue") then
+			go.delete(message.id)
+		end
 	elseif message_id == hash("drag_start") then
 		print("Drag started", message.id, message.group)
 	elseif message_id == hash("drag_end") then

@@ -212,7 +212,7 @@ embedded_instances {
   "pivot: PIVOT_SW\\n"
   "blend_mode: BLEND_MODE_ALPHA\\n"
   "line_break: false\\n"
-  "text: \\\"DRAG GREEN ALIENS\\\"\\n"
+  "text: \\\"DRAG GREEN ALIENS. CLICK TO DELETE BLUE.\\\"\\n"
   "font: \\\"/examples/assets/fonts/kenpixel15.font\\\"\\n"
   "material: \\\"/builtins/fonts/label.material\\\"\\n"
   "\"\n"
