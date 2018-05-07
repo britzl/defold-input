@@ -1,4 +1,4 @@
-local mock = require "deftest.mock"
+local mock = require "deftest.mock.mock"
 
 return function()
 	local state = require "in.state"
