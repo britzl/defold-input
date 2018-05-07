@@ -1,5 +1,7 @@
 ![](logo.jpeg)
 
+[![Build Status](https://travis-ci.org/britzl/defold-input.svg?branch=master)](https://travis-ci.org/britzl/defold-input)
+
 # Defold-Input
 Defold-Input contains a number of different Lua modules and scripts to simplify input related operations such as gestures detection, user configurable key bindings, input state handling and dragging/clicking game objects.
 
