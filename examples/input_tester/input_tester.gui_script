@@ -1,13 +1,32 @@
 local prettify = require "examples.prettify"
+local button = require "in.button"
 
 function init(self)
-	msg.post(".", "acquire_input_focus")
+	button.acquire()
 	gui.show_keyboard(gui.KEYBOARD_TYPE_DEFAULT, false)
+
+	button.register("keyboard/button", function()
+		gui.show_keyboard(gui.KEYBOARD_TYPE_DEFAULT, false)	
+	end)
+end
+
+function final(self)
+	button.release()
+	button.unregister()
 end
 
 function on_input(self, action_id, action)
+	button.on_input(action_id, action)
 	if action_id or (action.acc_x == 0 and action.acc_y == 0 and action.acc_z == 0) then
 		local s = prettify(action)
+		print(action_id)
+		print(s)
+		if action.text then
+			print("action.text", string.byte(action.text))
+		end
+		if action.markedtext then
+			print("action.markedtext", string.byte(action.markedtext))
+		end
 		gui.set_text(gui.get_node("input"), tostring(action_id) .. "\n" .. s)
 	end
 end
