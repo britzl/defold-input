@@ -29,6 +29,8 @@
 
 local M = {}
 
+M.TOUCH = hash("touch")
+
 local registered_nodes = {}
 
 local function ensure_node(node_or_node_id)
@@ -99,7 +101,7 @@ end
 -- @param action
 -- @return true if input a registerd node received input
 function M.on_input(action_id, action)
-	if action.released then
+	if action_id == M.TOUCH and action.released then
 		local url = msg.url()
 		for _,registered_node in pairs(registered_nodes) do
 			if registered_node.url == url then
