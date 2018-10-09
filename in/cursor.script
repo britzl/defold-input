@@ -80,6 +80,7 @@ function update(self, dt)
 		self.state.pressed_id = self.state.over_id
 		self.state.pressed_group = self.state.over_group
 		self.state.pressed_pos = go.get_position()
+		self.state.pressed_offset = self.state.pressed_pos - go.get_position(self.state.over_id)
 		notify_event(self, self.state.pressed_id, self.state.pressed_group, "pressed")
 	end
 
@@ -92,7 +93,7 @@ function update(self, dt)
 	end
 
 	if self.state.dragging then
-		go.set_position(pos, self.state.pressed_id)
+		go.set_position(pos - self.state.pressed_offset, self.state.pressed_id)
 	end
 
 	self.collision_id = nil
