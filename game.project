@@ -14,6 +14,7 @@ gamepads = /in/gamepads/in.gamepadsc
 [display]
 width = 1136
 height = 640
+dynamic_orientation = 1
 
 [physics]
 scale = 0.02

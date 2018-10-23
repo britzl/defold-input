@@ -1,0 +1,88 @@
+local prettify = require "examples.prettify"
+local acc = require "in.accelerometer"
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+	self.width = tonumber(sys.get_config("display.width", 0))
+	self.height = tonumber(sys.get_config("display.height", 0))
+	window.set_listener(function(self, event, data)
+		if event == window.WINDOW_EVENT_RESIZED then
+			acc.on_window_resized(data.width, data.height)
+			self.width = data.width
+			self.height = data.height
+		end
+	end)
+	acc.calibrate()
+end
+
+
+function final(self)
+	acc.reset()
+end
+
+
+local function update_label()
+	local avg = acc.average()
+	local zero = acc.zero()
+	local latest = acc.latest()
+	local calibrated = acc.calibrated()
+	local adjusted = acc.adjusted()
+
+	local info = ([[
+Average (%.3f),(%.3f),(%.3f)
+Zero (%.3f),(%.3f),(%.3f)
+Latest (%.3f),(%.3f),(%.3f)
+Calibrated (%.3f),(%.3f),(%.3f)
+Adjusted (%.3f),(%.3f),(%.3f)
+]]):format(
+	avg.x, avg.y, avg.z,
+	zero.x, zero.y, zero.z,
+	latest.x, latest.y, latest.z,
+	calibrated.x, calibrated.y, calibrated.z,
+	adjusted.x, adjusted.y, adjusted.z
+	)
+	label.set_text("info#label", info)
+end
+
+function update(self, dt)
+	update_label()
+	local adjusted = acc.adjusted()
+	local force = adjusted * 10000 * dt
+	msg.post(".", "apply_force", { position = go.get_world_position(), force = force })
+end
+
+function on_input(self, action_id, action)
+	if not action.acc_x then
+		local action_pos = vmath.vector3(action.x, action.y, 0)
+		if action.pressed then
+			self.drag = true
+			action.dx = 0
+			action.dy = 0
+			acc.calibrate()
+		elseif action.released then
+			self.drag = nil
+			acc.calibrate()
+		end
+
+		if self.drag then
+			local diff = action_pos - vmath.vector3(self.width / 2, self.height / 2, 0)
+			action.acc_x = diff.y / (self.height / 2)
+			action.acc_y = diff.x / (self.width / 2)
+			action.acc_z = 0
+		else
+			action.acc_x = 0
+			action.acc_y = 0
+			action.acc_z = 0
+		end
+		acc.on_input(action)
+	else
+		--action.acc_x, action.acc_y = action.acc_y, action.acc_x
+		--action.acc_x = action.acc_x * -1
+		acc.on_input(action)
+	end
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Remove this function if not needed
+end

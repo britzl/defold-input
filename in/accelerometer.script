@@ -1,0 +1,28 @@
+go.property("samplecount", 20)
+
+local acc = require "in.accelerometer"
+
+function init(self)
+	self.acc = acc.create(self.samplecount)
+	msg.post(".", "acquire_input_focus")
+end
+
+function update(self, dt)
+	local adjusted = self.acc.adjusted()
+	msg.post(".", "accelerometer", { x = adjusted.x, y = adjusted.y, z = adjusted.z })
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("calibrate") then
+		self.acc.calibrate()
+	end
+end
+
+function on_input(self, action_id, action)
+	self.acc.on_input(action)
+end
+
+function on_reload(self)
+	-- Add reload-handling code here
+	-- Remove this function if not needed
+end
