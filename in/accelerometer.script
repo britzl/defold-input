@@ -15,6 +15,8 @@ end
 function on_message(self, message_id, message, sender)
 	if message_id == hash("calibrate") then
 		self.acc.calibrate()
+	elseif message_id == hash("on_window_resized") then
+		self.acc.on_window_resized(message.width, message.height)
 	end
 end
 
