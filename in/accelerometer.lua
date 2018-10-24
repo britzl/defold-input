@@ -92,7 +92,7 @@ function M.create(samplecount)
 
 	function instance.adjusted()
 		local adjusted = vmath.vector3(
-			landscape and average.y or average.x,
+			landscape and -average.y or average.x,
 			landscape and average.x or average.y,
 			average.z)
 		return apply_calibration(adjusted)
