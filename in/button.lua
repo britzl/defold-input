@@ -69,7 +69,7 @@ function M.unregister(node_or_string)
 		end
 	else
 		local node = ensure_node(node_or_string)
-		registered_node[node] = nil
+		registered_nodes[node] = nil
 	end
 end
 
