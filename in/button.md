@@ -20,6 +20,11 @@ The Button module can be used via ```button.lua```:
 		end)
 	end
 
+	function final(self)
+		button.unregister("blue")
+		button.unregister("green")
+	end
+
 	function on_input(self, action_id, action)
 		button.on_input(action_id, action)
 	end

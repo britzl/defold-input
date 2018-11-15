@@ -31,10 +31,21 @@ local M = {}
 
 M.TOUCH = hash("touch")
 
+local EMPTY_HASH = hash("")
+
 local registered_nodes = {}
 
 local function ensure_node(node_or_node_id)
 	return type(node_or_node_id) == "string" and gui.get_node(node_or_node_id) or node_or_node_id
+end
+
+local function hash_to_hex(h)
+	return h and _G.hash_to_hex(h) or ""
+end
+
+local function node_to_key(node)
+	local url = msg.url()
+	return hash_to_hex(url.socket) .. hash_to_hex(url.path) .. hash_to_hex(url.fragment) .. hash_to_hex(gui.get_id(node))
 end
 
 --- Convenience function to acquire input focus
@@ -47,13 +58,15 @@ function M.release()
 	msg.post(".", "release_input_focus")
 end
 
---- Register a node and a callback to invoke when the node
--- receives input
+--- Register a node and a callback to invoke when it is clicked
 function M.register(node_or_string, callback)
 	assert(node_or_string, "You must provide a node")
 	assert(callback, "You must provide a callback")
 	local node = ensure_node(node_or_string)
-	registered_nodes[node] = { url = msg.url(), callback = callback, node = node, scale = gui.get_scale(node) }
+	assert(node, "You must provide an existing node or node name")
+	local key = node_to_key(node)
+	registered_nodes[key] = { url = msg.url(), callback = callback, node = node, scale = gui.get_scale(node) }
+	return node
 end
 
 --- Unregister a previously registered node or all nodes
@@ -69,7 +82,20 @@ function M.unregister(node_or_string)
 		end
 	else
 		local node = ensure_node(node_or_string)
-		registered_nodes[node] = nil
+		assert(node, "You must provide an existing node or node name")
+		local key = node_to_key(node)
+		assert(registered_nodes[key], "You must provide the id of a registered node")
+		registered_nodes[key] = nil
+	end
+end
+
+
+function M.dump()
+	local url = msg.url()
+	for k,registered_node in pairs(registered_nodes) do
+		if registered_node.url == url then
+			print(k, registered_node.node)
+		end
 	end
 end
 
@@ -95,23 +121,46 @@ local function is_enabled(node)
 	end
 end
 
+
+local function find_registered_node(x, y)
+	local url = msg.url()
+	for _,registered_node in pairs(registered_nodes) do
+		if registered_node.url == url then
+			local node = registered_node.node
+			if is_enabled(node) and gui.pick_node(node, x, y) then
+				return registered_node
+			end
+		end
+	end
+end
+
 --- Forward on_input calls to this function to detect input
 -- for registered nodes
 -- @param action_id,
 -- @param action
 -- @return true if input a registerd node received input
 function M.on_input(action_id, action)
-	if action_id == M.TOUCH and action.released then
-		local url = msg.url()
-		for _,registered_node in pairs(registered_nodes) do
-			if registered_node.url == url then
-				local node = registered_node.node
-				if is_enabled(node) and gui.pick_node(node, action.x, action.y) then
-					shake(node, registered_node.scale)
-					registered_node.callback()
-					return true
+	if action_id == M.TOUCH then
+		if action.pressed then
+			local registered_node = find_registered_node(action.x, action.y)
+			if registered_node then
+				registered_node.pressed = true
+				return true
+			end
+		elseif action.released then
+			local registered_node = find_registered_node(action.x, action.y)
+			local pressed = registered_node and registered_node.pressed
+			local url = msg.url()
+			for _,registered_node in pairs(registered_nodes) do
+				if registered_node.url == url then
+					registered_node.pressed = false
 				end
 			end
+			if pressed then
+				shake(registered_node.node, registered_node.scale)
+				registered_node.callback()
+			end
+			return pressed
 		end
 	end
 	return false
