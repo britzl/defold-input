@@ -1,0 +1,24 @@
+local button = require "in.button"
+
+function init(self)
+	button.acquire()
+	button.register("left1/button", function()
+		print("left1")
+	end)
+	button.register("left2/button", function()
+		print("left2")
+	end)
+end
+
+function final(self)
+	button.unregister()
+end
+
+function on_input(self, action_id, action)
+	button.on_input(action_id, action)
+end
+
+function on_reload(self)
+	-- Add input-handling code here
+	-- Remove this function if not needed
+end
