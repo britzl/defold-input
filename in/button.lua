@@ -35,6 +35,8 @@ local EMPTY_HASH = hash("")
 
 local registered_nodes = {}
 
+local index_count = 0
+
 local function ensure_node(node_or_node_id)
 	return type(node_or_node_id) == "string" and gui.get_node(node_or_node_id) or node_or_node_id
 end
@@ -45,7 +47,13 @@ end
 
 local function node_to_key(node)
 	local url = msg.url()
-	return hash_to_hex(url.socket) .. hash_to_hex(url.path) .. hash_to_hex(url.fragment) .. hash_to_hex(gui.get_id(node))
+	local id = gui.get_id(node)
+	if id == EMPTY_HASH then
+		id = hash("defold-input-button_" .. tostring(index_count))
+		gui.set_id(node, id)
+		index_count = index_count + 1
+	end
+	return hash_to_hex(url.socket) .. hash_to_hex(url.path) .. hash_to_hex(url.fragment) .. hash_to_hex(id)
 end
 
 --- Convenience function to acquire input focus

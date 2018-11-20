@@ -8,6 +8,21 @@ function init(self)
 	button.register("left2/button", function()
 		print("left2")
 	end)
+
+	local clone1 = gui.clone_tree(gui.get_node("left1/button"))
+	local clone2 = gui.clone_tree(gui.get_node("left1/button"))
+	local clone1_button = clone1[hash("left1/button")]
+	local clone2_button = clone2[hash("left1/button")]
+	gui.set_text(clone1[hash("left1/label")], "clone 1")
+	gui.set_text(clone2[hash("left1/label")], "clone 2")
+	gui.set_position(clone1_button, gui.get_position(clone1_button) + vmath.vector3(180, 80, 0))
+	gui.set_position(clone2_button, gui.get_position(clone2_button) + vmath.vector3(180, -80, 0))
+	button.register(clone1_button, function()
+		print("clone1")
+	end)
+	button.register(clone2_button, function()
+		print("clone2")
+	end)
 end
 
 function final(self)
