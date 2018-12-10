@@ -1,0 +1,50 @@
+local keyboard = require "in.keyboard"
+local button = require "in.button"
+
+local function log(self, text)
+	self.log = self.log .. text .. "\n"
+	gui.set_text(gui.get_node("log"), self.log)
+end
+
+function init(self)
+	button.acquire()
+
+	button.register("show_text/button", function()
+		keyboard.show(gui.KEYBOARD_TYPE_DEFAULT)
+	end)
+	button.register("show_numeric/button", function()
+		keyboard.show(gui.KEYBOARD_TYPE_NUMBER_PAD)
+	end)
+	button.register("show_email/button", function()
+		keyboard.show(gui.KEYBOARD_TYPE_EMAIL)
+	end)
+	button.register("show_password/button", function()
+		keyboard.show(gui.KEYBOARD_TYPE_PASSWORD)
+	end)
+	button.register("hide/button", function()
+		keyboard.hide()
+	end)
+	
+	self.log = ""
+	--log(self, "init")
+end
+
+function on_input(self, action_id, action)
+	button.on_input(action_id, action)
+	if action_id == hash("text") then
+		local node = gui.get_node("text")
+		gui.set_text(node, gui.get_text(node) .. action.text)
+	elseif action_id == hash("key_backspace") and (action.released or action.repeated) then
+		local node = gui.get_node("text")
+		local text = gui.get_text(node)
+		gui.set_text(node, text:sub(1, #text - 1))
+	end
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == keyboard.KEYBOARD_INPUT then
+		gui.set_text(gui.get_node("text"), message.text)
+	elseif message_id == hash("log") then
+		log(self, message.text)
+	end
+end

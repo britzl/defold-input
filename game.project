@@ -1,7 +1,7 @@
 [project]
 title = Defold-Input
 version = 0.1
-dependencies = https://github.com/britzl/deftest/archive/2.6.0.zip
+dependencies = https://github.com/britzl/deftest/archive/2.6.0.zip,https://github.com/britzl/defold-indexhtml/archive/master.zip
 
 [bootstrap]
 main_collection = /examples/examples.collectionc
@@ -12,8 +12,8 @@ game_binding = /in/bindings/all.input_bindingc
 gamepads = /in/gamepads/in.gamepadsc
 
 [display]
-width = 1136
-height = 640
+width = 640
+height = 1136
 dynamic_orientation = 1
 
 [physics]
@@ -45,4 +45,7 @@ bundle_identifier = com.britzl.defold.input
 
 [ios]
 bundle_identifier = com.britzl.defold.input
+
+[html5]
+htmlfile = /index.html
 
