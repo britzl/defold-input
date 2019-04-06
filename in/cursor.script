@@ -9,15 +9,31 @@ go.property("notify_own_gameobject", true)
 local COLLISION_RESPONSE = hash("collision_response")
 local INPUT = hash("input")
 
+local action_pos = vmath.vector3()
 local function handle_input(self, action_id, action)
-	if not action_id or action_id == self.action_id then
-		go.set_position(vmath.vector3(action.x, action.y, 0))
-
+	if not action_id and action.acc_x then
+		return
+	end
+	action_pos.x = action.x
+	action_pos.y = action.y
+	-- mouse movement
+	if not action_id then
+		self.mouse = true
+		go.set_position(action_pos)
+	-- click or finger touching screen
+	elseif action_id == self.action_id then
 		if action.pressed then
 			self.pressed = true
 		elseif action.released then
 			self.released = true
+		else
+			self.mouse = false
+			self.touch = true
+			if not self.previous_touch then
+				self.pressed = true
+			end
 		end
+		go.set_position(action_pos)
 	end
 end
 
@@ -50,6 +66,10 @@ local function notify_event(self, game_object_id, game_object_group, message_id)
 end
 
 function update(self, dt)
+	if not self.touch and self.previous_touch then
+		self.released = true
+	end
+
 	local pos = go.get_position()
 
 	if self.released and self.state.pressed then
@@ -61,6 +81,11 @@ function update(self, dt)
 		self.state.pressed = false
 		self.state.pressed_id = nil
 		self.state.pressed_group = nil
+		if self.previous_touch and self.state.over_id then
+			notify_event(self, self.state.over_id, self.state.over_group, "cursor_out")
+			self.state.over_id = nil
+			self.state.over_group = nil
+		end
 	end
 
 	if self.state.over_id and self.state.over_id ~= self.collision_id then
@@ -69,7 +94,7 @@ function update(self, dt)
 		self.state.over_group = nil
 	end
 
-	if self.collision_id and self.state.over_id ~= self.collision_id then
+	if (self.mouse or self.touch) and self.collision_id and self.state.over_id ~= self.collision_id then
 		self.state.over_id = self.collision_id
 		self.state.over_group = self.collision_group
 		notify_event(self, self.state.over_id, self.state.over_group, "cursor_over")
@@ -100,6 +125,8 @@ function update(self, dt)
 	self.collision_group = nil
 	self.pressed = false
 	self.released = false
+	self.previous_touch = self.touch
+	self.touch = false
 end
 
 function on_message(self, message_id, message, sender)
