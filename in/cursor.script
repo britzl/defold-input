@@ -11,6 +11,7 @@ local INPUT = hash("input")
 
 local action_pos = vmath.vector3()
 local function handle_input(self, action_id, action)
+	-- ignore accelerometer
 	if not action_id and action.acc_x then
 		return
 	end
@@ -18,29 +19,40 @@ local function handle_input(self, action_id, action)
 	action_pos.y = action.y
 	-- mouse movement
 	if not action_id then
-		self.mouse = true
 		go.set_position(action_pos)
-	-- click or finger touching screen
-	elseif action_id == self.action_id then
+		-- click or finger touching screen
+	elseif action_id == self.action_id then		
 		if action.pressed then
-			self.pressed = true
-		elseif action.released then
-			self.released = true
-		else
-			self.mouse = false
 			self.touch = true
-			if not self.previous_touch then
-				self.pressed = true
-			end
+			self.pressed = true
+			self.skip_frame = true
+		elseif action.released then
+			self.touch = false
+			self.released = true
+			self.skip_frame = true
 		end
 		go.set_position(action_pos)
 	end
+end
+
+local function is_mobile()
+	local sys_info = sys.get_sys_info()
+	if sys_info.system_name == "Android" or sys_info.system_name == "iPhone OS" then
+		return true
+	elseif sys_info.user_agent:find("Android") then
+		return true
+	elseif sys_info.user_agent:find("iPhone") or sys_info.user_agent:find("iPad") then
+		return true
+	end
+	return false
 end
 
 function init(self)
 	if self.acquire_input_focus then
 		msg.post(".", "acquire_input_focus")
 	end
+
+	self.mobile = is_mobile()
 
 	self.collision_id = nil
 	self.collision_group = nil
@@ -66,12 +78,20 @@ local function notify_event(self, game_object_id, game_object_group, message_id)
 end
 
 function update(self, dt)
-	if not self.touch and self.previous_touch then
-		self.released = true
+	-- skip one frame to give the collision data a chance to properly update
+	-- after a press or release
+	if self.skip_frame then
+		self.skip_frame = false
+		self.collision_id = nil
+		self.collision_group = nil
+		return
 	end
 
 	local pos = go.get_position()
 
+	--
+	-- RELEASE
+	--
 	if self.released and self.state.pressed then
 		if self.state.dragging then
 			self.state.dragging = false
@@ -81,25 +101,38 @@ function update(self, dt)
 		self.state.pressed = false
 		self.state.pressed_id = nil
 		self.state.pressed_group = nil
-		if self.previous_touch and self.state.over_id then
+		-- release on mobile/touch screen should also trigger a cursor_out event
+		if self.mobile and self.state.over_id then
 			notify_event(self, self.state.over_id, self.state.over_group, "cursor_out")
 			self.state.over_id = nil
 			self.state.over_group = nil
 		end
 	end
 
+	--
+	-- OUT
+	--
 	if self.state.over_id and self.state.over_id ~= self.collision_id then
 		notify_event(self, self.state.over_id, self.state.over_group, "cursor_out")
 		self.state.over_id = nil
 		self.state.over_group = nil
 	end
 
-	if (self.mouse or self.touch) and self.collision_id and self.state.over_id ~= self.collision_id then
+	--
+	-- OVER
+	--	
+	-- over event should happen on non-mobile/touch screen when cursor is above collision
+	-- object or on mobile/touch screen while touching and moving finger over collision
+	-- object
+	if (not self.mobile or self.touch) and self.collision_id and self.state.over_id ~= self.collision_id then
 		self.state.over_id = self.collision_id
 		self.state.over_group = self.collision_group
 		notify_event(self, self.state.over_id, self.state.over_group, "cursor_over")
 	end
 
+	--
+	-- PRESSED
+	--
 	if self.pressed and not self.state.pressed and self.state.over_id then
 		self.state.pressed = true
 		self.state.pressed_id = self.state.over_id
@@ -109,6 +142,9 @@ function update(self, dt)
 		notify_event(self, self.state.pressed_id, self.state.pressed_group, "pressed")
 	end
 
+	--
+	-- DRAG
+	--
 	if self.drag and self.state.pressed and not self.state.dragging then
 		local distance = vmath.length(pos - self.state.pressed_pos)
 		if distance >= self.drag_threshold then
@@ -125,8 +161,6 @@ function update(self, dt)
 	self.collision_group = nil
 	self.pressed = false
 	self.released = false
-	self.previous_touch = self.touch
-	self.touch = false
 end
 
 function on_message(self, message_id, message, sender)
