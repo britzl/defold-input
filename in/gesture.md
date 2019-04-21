@@ -8,6 +8,8 @@ Attach the ```gesture.script``` to the game object that should detect gestures. 
 		if message_id == hash("on_gesture") then
 			if message.swipe_right then
 				print(message.swipe.from, message.swipe.to)
+			elseif message.drag_left then
+				print(message.drag.from, message.drag.to)
 			elseif message.tap then
 				print(message.tap.position)
 			elseif message.double_tap then
@@ -35,6 +37,8 @@ Using the gesture module directly gives you full control but requires a couple o
 		if g then
 			if g.swipe_right then
 				print(g.swipe.from, g.swipe.to)
+			elseif g.drag_left then
+				print(g.drag.from, g.drag.to)
 			elseif g.tap then
 				print(g.tap.position)
 			elseif g.double_tap then
@@ -77,6 +81,7 @@ The Gesture module has the following configuration options:
 * ```action_id``` - (hash) The action_id to use when detecting gestures (default: "touch")
 * ```double_tap_interval``` - (number) Maximum time in seconds between two taps to consider it as a double tap (default: 0.5)
 * ```long_press_time``` - (number) Minimum time in seconds before a tap is considered a long press (default: 0.5)
-* ```swipe_threshold``` - (number) Minimum distance in pixels before considering it a swipe (default: 100)
+* ```swipe_threshold``` - (number) Minimum distance in pixels before considering it a swipe (default: 50)
+* ```drag_threshold``` - (number) Minimum distance in pixels before considering it a drag (default: 50)
 * ```tap_threshold``` - (number) Maximum distance in pixels between a press and release action to consider it a tap (default: 20)
 * ```multi_touch``` - (boolean) If multi touch gestures should be handled or not (default: true)

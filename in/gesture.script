@@ -5,6 +5,7 @@ local gesture = require "in.gesture"
 go.property("action_id", hash("touch"))
 go.property("tap_threshold", 20)
 go.property("double_tap_interval", 0.5)
+go.property("drag_threshold", 20)
 go.property("swipe_threshold", 20)
 go.property("swipe_time", 2)
 go.property("long_press_time", 1.0)
@@ -16,6 +17,7 @@ function init(self)
 		action_id = self.action_id,
 		tap_threshold = self.tap_threshold,
 		double_tap_interval = self.double_tap_interval,
+		drag_threshold = self.drag_threshold,
 		swipe_threshold = self.swipe_threshold,
 		swipe_time = self.swipe_time,
 		long_press_time = self.long_press_time,

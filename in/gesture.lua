@@ -18,6 +18,9 @@ M.SETTINGS = {
 	--- maximum time between a pressed and release action to consider it a swipe
 	swipe_time = 0.5,
 
+	--- minimum distance between a pressed and release action to consider it a drag
+	drag_threshold = 50,
+
 	--- minimum time of a pressed/release sequence to consider it a long press
 	long_press_time = 0.5,
 }
@@ -40,7 +43,11 @@ local function create_touch_state()
 		from = vmath.vector3(),
 		to = vmath.vector3(),
 	}
-
+	state.drag = {
+		from = vmath.vector3(),
+		to = vmath.vector3(),
+	}
+	
 	state.pressed = false
 	state.pressed_position = nil
 	state.pressed_time = nil
@@ -61,6 +68,7 @@ function M.create(settings)
 	settings.tap_threshold = settings.tap_threshold or M.SETTINGS.tap_threshold
 	settings.double_tap_interval = settings.double_tap_interval or M.SETTINGS.double_tap_interval
 	settings.swipe_threshold = settings.swipe_threshold or M.SETTINGS.swipe_threshold
+	settings.drag_threshold = settings.drag_threshold or M.SETTINGS.drag_threshold
 	settings.swipe_time = settings.swipe_time or M.SETTINGS.swipe_time
 	settings.long_press_time = settings.long_press_time or M.SETTINGS.long_press_time
 
@@ -90,7 +98,12 @@ function M.create(settings)
 		gestures.swipe_up = false
 		gestures.swipe_down = false
 		gestures.swipe = nil
-
+		gestures.drag = nil
+		gestures.drag_up = nil
+		gestures.drag_down = nil
+		gestures.drag_left = nil
+		gestures.drag_right = nil
+				
 		gestures.two_finger.tap = false
 		gestures.two_finger.double_tap = false
 		gestures.two_finger.long_press = false
@@ -107,17 +120,22 @@ function M.create(settings)
 		state.is_double_tap = false
 		state.is_tap = false
 		state.is_long_press = false
+		state.is_drag = false
+		state.drag_left = false
+		state.drag_right = false
+		state.drag_up = false
+		state.drag_down = false
 		state.is_swipe = false
 		state.swipe_left = false
 		state.swipe_right = false
 		state.swipe_up = false
 		state.swipe_down = false
-				
+						
 		if touch.pressed then
 			state.pressed = true
 			state.pressed_position = vmath.vector3(touch.x, touch.y, 0)
 			state.pressed_time = socket.gettime()
-		elseif touch.released then
+		else
 			local dx = state.pressed_position and (state.pressed_position.x - touch.x) or 0
 			local dy = state.pressed_position and (state.pressed_position.y - touch.y) or 0
 			local ax = math.abs(dx)
@@ -125,52 +143,65 @@ function M.create(settings)
 			local distance = math.max(ax, ay)
 			local time = socket.gettime() - (state.pressed_time or 0)
 			local is_tap = distance < settings.tap_threshold
+			local is_drag = distance >= settings.drag_threshold
 			local is_swipe = distance >= settings.swipe_threshold and time <= settings.swipe_time
-			if is_tap then
-				if state.potential_double_tap and socket.gettime() - (state.released_time or 0) < settings.double_tap_interval then
-					state.is_double_tap = true
-					state.was_double_tap = true
-					state.double_tap.position.x = touch.x
-					state.double_tap.position.y = touch.y
+			local vertical = ay > ax
+			local up = vertical and dy < 0
+			local down = vertical and dy > 0
+			local right = not vertical and dx < 0
+			local left = not vertical and dx > 0
+			if (state.pressed and not touch.released) or (touch.released and is_drag and not is_swipe) then
+				if is_drag then
+					state.is_drag = true
+					state.drag_up = up
+					state.drag_down = down
+					state.drag_right = right
+					state.drag_left = left
+					state.drag.from.x = state.pressed_position.x
+					state.drag.from.y = state.pressed_position.y
+					state.drag.to.x = touch.x
+					state.drag.to.y = touch.y
 				end
-				if time < settings.long_press_time then
-					-- a third tap in short succession should not be considered a potential double tap
-					state.potential_double_tap = not state.was_double_tap
-					state.is_tap = true
+			elseif touch.released then
+				if is_tap then
+					if state.potential_double_tap and socket.gettime() - (state.released_time or 0) < settings.double_tap_interval then
+						state.is_double_tap = true
+						state.was_double_tap = true
+						state.double_tap.position.x = touch.x
+						state.double_tap.position.y = touch.y
+					end
+					if time < settings.long_press_time then
+						-- a third tap in short succession should not be considered a potential double tap
+						state.potential_double_tap = not state.was_double_tap
+						state.is_tap = true
+						state.was_double_tap = false
+						state.tap.position.x = touch.x
+						state.tap.position.y = touch.y
+					else
+						state.potential_double_tap = false
+						state.is_long_press = true
+						state.was_double_tap = false
+						state.long_press.position.x = touch.x
+						state.long_press.position.y = touch.y
+						state.long_press.time = time
+					end
+				elseif is_swipe then
+					state.is_swipe = true
 					state.was_double_tap = false
-					state.tap.position.x = touch.x
-					state.tap.position.y = touch.y
-				else
+					state.swipe_up = up
+					state.swipe_down = down
+					state.swipe_right = right
+					state.swipe_left = left
 					state.potential_double_tap = false
-					state.is_long_press = true
-					state.was_double_tap = false
-					state.long_press.position.x = touch.x
-					state.long_press.position.y = touch.y
-					state.long_press.time = time
+					state.swipe.from.x = state.pressed_position.x
+					state.swipe.from.y = state.pressed_position.y
+					state.swipe.to.x = touch.x
+					state.swipe.to.y = touch.y
+					state.swipe.time = time
 				end
-			elseif is_swipe then
-				state.is_swipe = true
-				state.was_double_tap = false
-				local vertical = ay > ax
-				if vertical and dy < 0 then
-					state.swipe_up = true
-				elseif vertical and dy > 0 then
-					state.swipe_down = true
-				elseif not vertical and dx < 0 then
-					state.swipe_right = true
-				elseif not vertical and dx > 0 then
-					state.swipe_left = true
-				end
-				state.potential_double_tap = false
-				state.swipe.from.x = state.pressed_position.x
-				state.swipe.from.y = state.pressed_position.y
-				state.swipe.to.x = touch.x
-				state.swipe.to.y = touch.y
-				state.swipe.time = time
-			end
-			
-			state.released_time = socket.gettime()
-			state.pressed = false
+				state.released_time = socket.gettime()
+				state.pressed = false
+			end	
 		end
 	end
 
@@ -190,6 +221,12 @@ function M.create(settings)
 			gestures.swipe_down = single_state.swipe_down
 			gestures.swipe_right = single_state.swipe_right
 			gestures.swipe_left = single_state.swipe_left
+		elseif single_state.is_drag then
+			gestures.drag = single_state.drag
+			gestures.drag_up = single_state.drag_up
+			gestures.drag_down = single_state.drag_down
+			gestures.drag_right = single_state.drag_right
+			gestures.drag_left = single_state.drag_left
 		end
 	end
 
