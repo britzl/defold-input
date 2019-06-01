@@ -17,11 +17,12 @@ local function handle_input(self, action_id, action)
 	end
 	action_pos.x = action.x
 	action_pos.y = action.y
+	self.action = action
 	-- mouse movement
 	if not action_id then
 		go.set_position(action_pos)
 		-- click or finger touching screen
-	elseif action_id == self.action_id then		
+	elseif action_id == self.action_id then
 		if action.pressed then
 			self.touch = true
 			self.pressed = true
@@ -66,14 +67,23 @@ function init(self)
 	}
 end
 
-local function notify_event(self, game_object_id, game_object_group, message_id)
+-- Cache the message table to limit the amount of short-lived objects created
+local message = {}
+
+local function notify_event(self, game_object_id, game_object_group, action, message_id)
 	-- pcall to catch errors when posting to a game object that might have been deleted
 	-- typically a cursor_out message that is generated when the game object is deleted
 	pcall(function()
 		if self.notify_own_gameobject then
-			msg.post(".", message_id, { id = game_object_id, group = game_object_group })
+			message.id = game_object_id
+			message.group = game_object_group
+			message.x = action.x
+			message.y = action.y
+			msg.post(".", message_id, message)
 		end
-		msg.post(game_object_id, message_id)
+		if game_object_id then
+			msg.post(game_object_id, message_id)
+		end
 	end)
 end
 
@@ -92,20 +102,26 @@ function update(self, dt)
 	--
 	-- RELEASE
 	--
-	if self.released and self.state.pressed then
-		if self.state.dragging then
-			self.state.dragging = false
-			notify_event(self, self.state.pressed_id, self.state.pressed_group, "drag_end")
-		end
-		notify_event(self, self.state.pressed_id, self.state.pressed_group, "released")
-		self.state.pressed = false
-		self.state.pressed_id = nil
-		self.state.pressed_group = nil
-		-- release on mobile/touch screen should also trigger a cursor_out event
-		if self.mobile and self.state.over_id then
-			notify_event(self, self.state.over_id, self.state.over_group, "cursor_out")
-			self.state.over_id = nil
-			self.state.over_group = nil
+	if self.released then
+		if self.state.pressed then
+			-- release on a game object
+			if self.state.dragging then
+				self.state.dragging = false
+				notify_event(self, self.state.pressed_id, self.state.pressed_group, self.action, "drag_end")
+			end
+			notify_event(self, self.state.pressed_id, self.state.pressed_group, self.action, "released")
+			self.state.pressed = false
+			self.state.pressed_id = nil
+			self.state.pressed_group = nil
+			-- release on mobile/touch screen should also trigger a cursor_out event
+			if self.mobile and self.state.over_id then
+				notify_event(self, self.state.over_id, self.state.over_group, self.action, "cursor_out")
+				self.state.over_id = nil
+				self.state.over_group = nil
+			end
+		else
+			-- release without game object
+			notify_event(self, nil, nil, self.action, "released")
 		end
 	end
 
@@ -113,33 +129,39 @@ function update(self, dt)
 	-- OUT
 	--
 	if self.state.over_id and self.state.over_id ~= self.collision_id then
-		notify_event(self, self.state.over_id, self.state.over_group, "cursor_out")
+		notify_event(self, self.state.over_id, self.state.over_group, self.action, "cursor_out")
 		self.state.over_id = nil
 		self.state.over_group = nil
 	end
 
 	--
 	-- OVER
-	--	
+	--
 	-- over event should happen on non-mobile/touch screen when cursor is above collision
 	-- object or on mobile/touch screen while touching and moving finger over collision
 	-- object
 	if (not self.mobile or self.touch) and self.collision_id and self.state.over_id ~= self.collision_id then
 		self.state.over_id = self.collision_id
 		self.state.over_group = self.collision_group
-		notify_event(self, self.state.over_id, self.state.over_group, "cursor_over")
+		notify_event(self, self.state.over_id, self.state.over_group, self.action, "cursor_over")
 	end
 
 	--
 	-- PRESSED
 	--
-	if self.pressed and not self.state.pressed and self.state.over_id then
-		self.state.pressed = true
-		self.state.pressed_id = self.state.over_id
-		self.state.pressed_group = self.state.over_group
-		self.state.pressed_pos = go.get_position()
-		self.state.pressed_offset = self.state.pressed_pos - go.get_position(self.state.over_id)
-		notify_event(self, self.state.pressed_id, self.state.pressed_group, "pressed")
+	if self.pressed then
+		if not self.state.pressed and self.state.over_id then
+			-- pressed on a game object
+			self.state.pressed = true
+			self.state.pressed_id = self.state.over_id
+			self.state.pressed_group = self.state.over_group
+			self.state.pressed_pos = go.get_position()
+			self.state.pressed_offset = self.state.pressed_pos - go.get_position(self.state.over_id)
+			notify_event(self, self.state.pressed_id, self.state.pressed_group, self.action, "pressed")
+		else
+			-- pressed without a game object
+			notify_event(self, nil, nil, self.action, "pressed")
+		end
 	end
 
 	--
@@ -149,7 +171,7 @@ function update(self, dt)
 		local distance = vmath.length(pos - self.state.pressed_pos)
 		if distance >= self.drag_threshold then
 			self.state.dragging = true
-			notify_event(self, self.state.pressed_id, self.state.pressed_group, "drag_start")
+			notify_event(self, self.state.pressed_id, self.state.pressed_group, self.action, "drag_start")
 		end
 	end
 

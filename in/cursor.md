@@ -24,9 +24,9 @@ The script will generate messages to game objects the cursor is interacting with
 
 * `cursor_over` - The cursors moves over the game object
 * `cursor_out` - The cursor moves out from the game object
-* `pressed` - When pressing the game object
-* `released` - When releasing the game object
+* `pressed` - When cursor is pressed (on the game object)
+* `released` - When cursor is released (on the game object)
 * `drag_start` - When starting to drag the game object
 * `drag_end` - When no longer dragging the game object
 
-The messages sent to the game object where the cursor script is attached will have `id` and `group` passed in the message.
+The messages sent to the game object where the cursor script is attached will have `id` and `group` as well as `x` and `y` (from `action.x` and `action.y`) passed in the message.

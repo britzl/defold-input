@@ -13,25 +13,25 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("cursor_over") then
-		print("Cursor over", message.id, message.group)
+		print("Cursor over", message.id, message.group, message.x, message.y)
 		label.set_text("info#events", "Cursor over")
 	elseif message_id == hash("cursor_out") then
-		print("Cursor out", message.id, message.group)
+		print("Cursor out", message.id, message.group, message.x, message.y)
 		label.set_text("info#events", "Cursor out")
 	elseif message_id == hash("pressed") then
-		print("Pressed", message.id, message.group)
+		print("Pressed", message.id, message.group, message.x, message.y)
 		label.set_text("info#events", "Pressed")
 	elseif message_id == hash("released") then
-		print("Released", message.id, message.group)
+		print("Released", message.id, message.group, message.x, message.y)
 		label.set_text("info#events", "Released")
 		if message.group == hash("blue") then
 			go.delete(message.id)
 		end
 	elseif message_id == hash("drag_start") then
-		print("Drag started", message.id, message.group)
+		print("Drag started", message.id, message.group, message.x, message.y)
 		label.set_text("info#events", "Drag started")
 	elseif message_id == hash("drag_end") then
-		print("Drag ended", message.id, message.group)
+		print("Drag ended", message.id, message.group, message.x, message.y)
 		label.set_text("info#events", "Drag ended")
 	end
 end
