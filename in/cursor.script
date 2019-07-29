@@ -73,20 +73,21 @@ end
 local message = {}
 
 local function notify_event(self, game_object_id, game_object_group, action, message_id)
-	-- pcall to catch errors when posting to a game object that might have been deleted
+	-- pcall to check if the game object exists since it might have been deleted
 	-- typically a cursor_out message that is generated when the game object is deleted
-	pcall(function()
-		if self.notify_own_gameobject then
-			message.id = game_object_id
-			message.group = game_object_group
-			message.x = action.x
-			message.y = action.y
-			msg.post(".", message_id, message)
-		end
-		if game_object_id then
-			msg.post(game_object_id, message_id)
-		end
+	local exists,_ = pcall(function()
+		go.get_id(game_object_id)
 	end)
+	if self.notify_own_gameobject then
+		message.id = game_object_id
+		message.group = game_object_group
+		message.x = action.x
+		message.y = action.y
+		msg.post(".", message_id, message)
+	end
+	if game_object_id and exists then
+		msg.post(game_object_id, message_id)
+	end
 end
 
 function update(self, dt)
