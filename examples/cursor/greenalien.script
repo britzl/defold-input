@@ -1,9 +1,4 @@
-local COLLISION_RESPONSE = hash("collision_response")
-local CONTACT_POINT_RESPONSE = hash("contact_point_response")
-local CURSOR_OVER = hash("cursor_over")
-local CURSOR_OUT = hash("cursor_out")
-local PRESSED = hash("pressed")
-local RELEASED = hash("released")
+local cursor = require "in.cursor"
 
 local function shake(self)
 	go.cancel_animations(".", "scale.x")
@@ -22,15 +17,15 @@ function init(self)
 end
 
 function on_message(self, message_id, message, sender)
-	if message_id == CURSOR_OVER then
+	if message_id == cursor.OVER then
 		self.over_pos = go.get_position()
 		go.set_position(vmath.vector3(self.over_pos.x, self.over_pos.y, 1))
 		go.animate("#sprite", "tint.w", go.PLAYBACK_ONCE_FORWARD, 1.5, go.EASING_OUTQUAD, 0.1)
-	elseif message_id == CURSOR_OUT then
+	elseif message_id == cursor.OUT then
 		local pos = go.get_position()
 		go.set_position(vmath.vector3(pos.x, pos.y, self.over_pos.z))
 		go.animate("#sprite", "tint.w", go.PLAYBACK_ONCE_FORWARD, 1, go.EASING_OUTQUAD, 0.1)
-	elseif message_id == PRESSED or message_id == RELEASED then
+	elseif message_id == cursor.PRESSED or message_id == cursor.RELEASED then
 		shake(self)
 	end
 end

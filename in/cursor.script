@@ -1,5 +1,7 @@
 --- Refer to cursor.md for documentation
 
+local cursor = require "in.cursor"
+
 go.property("action_id", hash("touch"))
 go.property("drag", true)
 go.property("drag_threshold", 20)
@@ -107,21 +109,21 @@ function update(self, dt)
 			-- release on a game object
 			if self.state.dragging then
 				self.state.dragging = false
-				notify_event(self, self.state.pressed_id, self.state.pressed_group, self.action, "drag_end")
+				notify_event(self, self.state.pressed_id, self.state.pressed_group, self.action, cursor.DRAG_END)
 			end
-			notify_event(self, self.state.pressed_id, self.state.pressed_group, self.action, "released")
+			notify_event(self, self.state.pressed_id, self.state.pressed_group, self.action, cursor.RELEASED)
 			self.state.pressed = false
 			self.state.pressed_id = nil
 			self.state.pressed_group = nil
 			-- release on mobile/touch screen should also trigger a cursor_out event
 			if self.mobile and self.state.over_id then
-				notify_event(self, self.state.over_id, self.state.over_group, self.action, "cursor_out")
+				notify_event(self, self.state.over_id, self.state.over_group, self.action, cursor.OUT)
 				self.state.over_id = nil
 				self.state.over_group = nil
 			end
 		else
 			-- release without game object
-			notify_event(self, nil, nil, self.action, "released")
+			notify_event(self, nil, nil, self.action, cursor.RELEASED)
 		end
 	end
 
@@ -129,7 +131,7 @@ function update(self, dt)
 	-- OUT
 	--
 	if self.state.over_id and self.state.over_id ~= self.collision_id then
-		notify_event(self, self.state.over_id, self.state.over_group, self.action, "cursor_out")
+		notify_event(self, self.state.over_id, self.state.over_group, self.action, cursor.OUT)
 		self.state.over_id = nil
 		self.state.over_group = nil
 	end
@@ -143,7 +145,7 @@ function update(self, dt)
 	if (not self.mobile or self.touch) and self.collision_id and self.state.over_id ~= self.collision_id then
 		self.state.over_id = self.collision_id
 		self.state.over_group = self.collision_group
-		notify_event(self, self.state.over_id, self.state.over_group, self.action, "cursor_over")
+		notify_event(self, self.state.over_id, self.state.over_group, self.action, cursor.OVER)
 	end
 
 	--
@@ -157,10 +159,10 @@ function update(self, dt)
 			self.state.pressed_group = self.state.over_group
 			self.state.pressed_pos = go.get_position()
 			self.state.pressed_offset = self.state.pressed_pos - go.get_position(self.state.over_id)
-			notify_event(self, self.state.pressed_id, self.state.pressed_group, self.action, "pressed")
+			notify_event(self, self.state.pressed_id, self.state.pressed_group, self.action, cursor.PRESSED)
 		else
 			-- pressed without a game object
-			notify_event(self, nil, nil, self.action, "pressed")
+			notify_event(self, nil, nil, self.action, cursor.PRESSED)
 		end
 	end
 
@@ -171,7 +173,7 @@ function update(self, dt)
 		local distance = vmath.length(pos - self.state.pressed_pos)
 		if distance >= self.drag_threshold then
 			self.state.dragging = true
-			notify_event(self, self.state.pressed_id, self.state.pressed_group, self.action, "drag_start")
+			notify_event(self, self.state.pressed_id, self.state.pressed_group, self.action, cursor.DRAG_START)
 		end
 	end
 
