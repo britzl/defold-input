@@ -1,0 +1,49 @@
+local onscreen = require "in.onscreen"
+
+local post_to_listener
+
+local function on_analog(action, control, touch)
+	if action == onscreen.ANALOG_PRESSED then
+		print("analog pressed")
+		post_to_listener("analog", { x = 0, y = 0, pressed = true })
+	elseif action == onscreen.ANALOG_RELEASED then
+		print("analog released")
+		post_to_listener("analog", { x = 0, y = 0, released = true })
+	elseif action == onscreen.ANALOG_MOVED then
+		print("analog moved")
+		post_to_listener("analog", { x = touch.x, y = touch.y })
+	end
+end
+
+local function on_control_a(action, control, touch)
+	if action == onscreen.BUTTON_PRESSED then
+		post_to_listener("button_a", { pressed = true })
+	elseif action == onscreen.BUTTON_RELEASED then
+		post_to_listener("button_a", { released = true })
+	end
+end
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+
+	post_to_listener = function(message_id, message)
+		if self.listener then
+			msg.post(self.listener, message_id, message or {})
+		end
+	end
+	
+	onscreen.register_analog(gui.get_node("analog"), { radius = 80 }, on_analog)
+	onscreen.register_button(gui.get_node("button_a"), nil, on_control_a)
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("register") then
+		self.listener = sender
+	elseif message_id == hash("unregister") then
+		self.listener = nil
+	end
+end
+
+function on_input(self, action_id, action)
+	onscreen.on_input(action_id, action)
+end

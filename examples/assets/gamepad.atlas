@@ -1,0 +1,12 @@
+images {
+  image: "/examples/assets/images/controls/shadedDark01.png"
+}
+images {
+  image: "/examples/assets/images/controls/shadedDark07.png"
+}
+images {
+  image: "/examples/assets/images/controls/shadedDark36.png"
+}
+margin: 0
+extrude_borders: 1
+inner_padding: 0

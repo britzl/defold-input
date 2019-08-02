@@ -1,7 +1,4 @@
 images {
-  image: "/examples/assets/images/set1_tiles.png"
-}
-images {
   image: "/examples/assets/images/blue_circle.png"
 }
 images {
@@ -15,6 +12,12 @@ images {
 }
 images {
   image: "/examples/assets/images/hitman1_gun.png"
+}
+images {
+  image: "/examples/assets/images/laserBlue01.png"
+}
+images {
+  image: "/examples/assets/images/playerShip3_red.png"
 }
 animations {
   id: "blue_player"
