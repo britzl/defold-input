@@ -2,21 +2,22 @@
 Use the Mapper module to map action ids to in-game actions. This makes it very easy to allow the user to rebind keys or gamepad button or to assign different sets of input for the same actions in a multiplayer game.
 
 # Input bindings
-In order to allow players to bind in-game actions to any key or gamepad button it is recommended to use an ```*.input_bindings``` file where each Input is bound to an Action. The [all.input_bindings](in/bindings/all-input_bindings) does this and it's recommended to use this file together with the Mapper module.
+In order to allow players to bind in-game actions to any key or gamepad button it is recommended to use an ```*.input_bindings``` file where each Input is bound to an Action. The [all.input_bindings](in/bindings/all-input_bindings) does this and it's recommended to use this file together with the Mapper module. The triggers in ```all.input_bindings``` exist as constants in ```in/triggers.lua```.
 
 # Bind actions to in-game actions
 Use the Mapper to define how incoming actions should translate to in-game actions. In the example below key bindings are defined for two players. For player one the KEY_LEFT and KEY_RIGHT (ie cursor keys) keys are bound to the in-game actions "move_left" and "move_right". For player two it is the "A" and "D" keys that are bound to the same in-game actions.
 
 	local mapper = require "in.mapper"
+	local triggers = require "in.triggers"
 
 	function init(self)
 		-- bindings for player 1
-		mapper.bind(mapper.KEY_LEFT, "move_left", 1)
-		mapper.bind(mapper.KEY_RIGHT, "move_right", 1)
+		mapper.bind(triggers.KEY_LEFT, "move_left", 1)
+		mapper.bind(triggers.KEY_RIGHT, "move_right", 1)
 
 		-- bindings for player 2
-		mapper.bind(mapper.KEY_A, "move_left", 2)
-		mapper.bind(mapper.KEY_D, "move_right", 2)
+		mapper.bind(triggers.KEY_A, "move_left", 2)
+		mapper.bind(triggers.KEY_D, "move_right", 2)
 	end
 
 Once the bindings are defined the Mapper module is ready for use, either via the ```mapper.script``` or directly via ```mapper.lua```.

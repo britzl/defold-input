@@ -1,10 +1,11 @@
 local mapper = require "in.mapper"
+local triggers = require "in.triggers"
 local actions = require "examples.mapper.actions"
 
 function init(self)
-	mapper.bind(mapper.KEY_LEFT, actions.LEFT, 1)
-	mapper.bind(mapper.KEY_RIGHT, actions.RIGHT, 1)
+	mapper.bind(triggers.KEY_LEFT, actions.LEFT, 1)
+	mapper.bind(triggers.KEY_RIGHT, actions.RIGHT, 1)
 	
-	mapper.bind(mapper.KEY_A, actions.LEFT, 2)
-	mapper.bind(mapper.KEY_D, actions.RIGHT, 2)
+	mapper.bind(triggers.KEY_A, actions.LEFT, 2)
+	mapper.bind(triggers.KEY_D, actions.RIGHT, 2)
 end

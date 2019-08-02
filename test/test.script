@@ -1,10 +1,12 @@
 local test_state = require "test.test_state"
 local test_button = require "test.test_button"
+local test_triggers = require "test.test_triggers"
 
 local deftest = require "deftest.deftest"
 
 function init(self)
 	deftest.add(test_state)
 	deftest.add(test_button)
+	deftest.add(test_triggers)
 	deftest.run()
 end
