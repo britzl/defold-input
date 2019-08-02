@@ -40,6 +40,16 @@ function M.unbind(input, player)
 end
 
 
+--- Unbind (remove) all input bindings 
+-- @param player Optional id for a player to unbind input from
+function M.unbind_all(player)
+	local bindings = get_player_bindings(player)
+	for input,_ in pairs(bindings) do
+		bindings[input] = nil
+	end
+end
+
+
 --- Handle incoming input from a script by finding an input binding and
 -- returning the bound action
 -- @param input The input received from on_input funcion (ie action_id)
