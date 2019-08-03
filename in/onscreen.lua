@@ -151,12 +151,21 @@ function M.create(config)
 end
 
 
-local instance = M.create()
+local singleton = M.create()
 
-for k,v in pairs(instance) do
-	if type(v) == "function" then
-		M[k] = v
-	end
+function M.register_button(node, settings, fn, instance)
+	instance = instance or singleton
+	return instance.register_button(node, settings, fn)
+end
+
+function M.register_analog(node, settings, fn, instance)
+	instance = instance or singleton
+	return instance.register_analog(node, settings, fn)
+end
+
+function M.on_input(action_id, action, instance)
+	instance = instance or singleton
+	return instance.on_input(action_id, action)
 end
 
 return M

@@ -55,39 +55,50 @@ function M.create()
 	return instance
 end
 
-local instance = M.create()
+local singleton = M.create()
 
---- Acquire input focus for the current script
+--- Acquire input focus for the current script and clear state
 -- @param url
-function M.acquire(url)
+-- @param instance Optional state instance to modify. Will use global state instance if none is specified
+function M.acquire(url, instance)
+	instance = instance or singleton
 	return instance.acquire(url)
 end
 
---- Release input focus for the current script
+--- Release input focus for the current script and clear state
 -- @param url
-function M.release(url)
+-- @param instance Optional state instance to modify. Will use global state instance if none is specified
+function M.release(url, instance)
+	instance = instance or singleton
 	return instance.release(url)
 end
 
 --- Check if an action is pressed/active
 -- @param action_id
+-- @param instance Optional state instance to modify. Will use global state instance if none is specified
 -- @return true if pressed/active
-function M.is_pressed(action_id)
+function M.is_pressed(action_id, instance)
+	instance = instance or singleton
 	return instance.is_pressed(action_id)
 end
 
 --- Forward any calls to on_input from scripts using this module
 -- @param action_id
 -- @param action
-function M.update(action_id, action)
+-- @param instance Optional state instance to modify. Will use global state instance if none is specified
+function M.update(action_id, action, instance)
+	instance = instance or singleton
 	return instance.on_input(action_id, action)
 end
-function M.on_input(action_id, action)
+function M.on_input(action_id, action, instance)
+	instance = instance or singleton
 	return instance.on_input(action_id, action)
 end
 
 --- Clear the state of any currently tracked input states
-function M.clear()
+-- @param instance Optional state instance to modify. Will use global state instance if none is specified
+function M.clear(instance)
+	instance = instance or singleton
 	instance.clear()
 end
 

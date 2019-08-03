@@ -124,40 +124,49 @@ end
 
 local singleton = M.create()
 
-function M.reset()
-	return singleton.reset()
+function M.reset(instance)
+	instance = instance or singleton
+	return instance.reset()
 end
 
-function M.calibrate()
-	return singleton.calibrate()
+function M.calibrate(instance)
+	instance = instance or singleton
+	return instance.calibrate()
 end
 
-function M.on_input(action)
-	return singleton.on_input(action)
+function M.on_input(action, instance)
+	instance = instance or singleton
+	return instance.on_input(action)
 end
 
-function M.calibrated()
-	return singleton.calibrated()
+function M.calibrated(instance)
+	instance = instance or singleton
+	return instance.calibrated()
 end
 
-function M.adjusted()
-	return singleton.adjusted()
+function M.adjusted(instance)
+	instance = instance or singleton
+	return instance.adjusted()
 end
 
-function M.average()
-	return singleton.average()
+function M.average(instance)
+	instance = instance or singleton
+	return instance.average()
 end
 
-function M.zero()
-	return singleton.zero()
+function M.zero(instance)
+	instance = instance or singleton
+	return instance.zero()
 end
 
-function M.latest()
-	return singleton.latest()
+function M.latest(instance)
+	instance = instance or singleton
+	return instance.latest()
 end
 
-function M.on_window_resized(width, height)
-	return singleton.on_window_resized(width, height)
+function M.on_window_resized(width, height, instance)
+	instance = instance or singleton
+	return instance.on_window_resized(width, height)
 end
 
 
