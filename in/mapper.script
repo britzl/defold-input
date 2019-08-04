@@ -3,6 +3,7 @@
 local mapper = require "in.mapper"
 
 go.property("player_id", 1)
+go.property("gamepad_index", 1)
 go.property("acquire_input_focus", false)
 
 function init(self)
@@ -10,7 +11,7 @@ function init(self)
 end
 
 function on_input(self, action_id, action)
-	local action_id = mapper.on_input(action_id, self.player_id)
+	local action_id = mapper.on_input(action_id, self.player_id, self.gamepad_index)
 	if action_id then
 		self.message.action_id = action_id
 		self.message.action = action
