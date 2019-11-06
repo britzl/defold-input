@@ -100,8 +100,6 @@ function update(self, dt)
 		return
 	end
 
-	local pos = go.get_position()
-
 	--
 	-- RELEASE
 	--
@@ -170,8 +168,9 @@ function update(self, dt)
 	--
 	-- DRAG
 	--
+	local cursor_pos = go.get_position()
 	if self.drag and self.state.pressed and not self.state.dragging then
-		local distance = vmath.length(pos - self.state.pressed_pos)
+		local distance = vmath.length(cursor_pos - self.state.pressed_pos)
 		if distance >= self.drag_threshold then
 			self.state.dragging = true
 			notify_event(self, self.state.pressed_id, self.state.pressed_group, self.action, cursor.DRAG_START)
@@ -179,7 +178,12 @@ function update(self, dt)
 	end
 
 	if self.state.dragging then
-		go.set_position(pos - self.state.pressed_offset, self.state.pressed_id)
+		-- move the dragged object
+		-- retain the offset between the cursor and the dragged object and use the z value from the dragged object
+		cursor_pos.x = cursor_pos.x - self.state.pressed_offset.x
+		cursor_pos.y = cursor_pos.y - self.state.pressed_offset.y
+		cursor_pos.z = go.get_position(self.state.pressed_id).z
+		go.set_position(cursor_pos, self.state.pressed_id)
 	end
 
 	self.collision_id = nil
