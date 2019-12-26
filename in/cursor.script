@@ -69,15 +69,20 @@ function init(self)
 	}
 end
 
+local function go_exists(id)
+	local exists,_ = pcall(function()
+		go.get_position(id)
+	end)
+	return exists
+end
+
 -- Cache the message table to limit the amount of short-lived objects created
 local message = {}
 
 local function notify_event(self, game_object_id, game_object_group, action, message_id)
 	-- pcall to check if the game object exists since it might have been deleted
 	-- typically a cursor_out message that is generated when the game object is deleted
-	local exists,_ = pcall(function()
-		go.get_position(game_object_id)
-	end)
+	local exists = go_exists(game_object_id)
 	if self.notify_own_gameobject then
 		message.id = game_object_id
 		message.group = game_object_group
@@ -178,12 +183,22 @@ function update(self, dt)
 	end
 
 	if self.state.dragging then
-		-- move the dragged object
-		-- retain the offset between the cursor and the dragged object and use the z value from the dragged object
-		cursor_pos.x = cursor_pos.x - self.state.pressed_offset.x
-		cursor_pos.y = cursor_pos.y - self.state.pressed_offset.y
-		cursor_pos.z = go.get_position(self.state.pressed_id).z
-		go.set_position(cursor_pos, self.state.pressed_id)
+		-- move the dragged object unless it has been deleted while being dragged
+		if not go_exists(self.state.pressed_id) then
+			self.state.dragging = false
+			self.state.pressed = nil
+			self.state.pressed_id = nil
+			self.state.pressed_group = nil
+			self.state.over_id = nil
+			notify_event(self, self.state.pressed_id, self.state.pressed_group, self.action, cursor.DRAG_END)
+			notify_event(self, self.state.pressed_id, self.state.pressed_group, self.action, cursor.RELEASED)
+		else
+			-- retain the offset between the cursor and the dragged object and use the z value from the dragged object
+			cursor_pos.x = cursor_pos.x - self.state.pressed_offset.x
+			cursor_pos.y = cursor_pos.y - self.state.pressed_offset.y
+			cursor_pos.z = go.get_position(self.state.pressed_id).z
+			go.set_position(cursor_pos, self.state.pressed_id)
+		end
 	end
 
 	self.collision_id = nil
