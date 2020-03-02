@@ -31,9 +31,13 @@ function init(self)
 			msg.post(self.listener, message_id, message or {})
 		end
 	end
-	
+
 	onscreen.register_analog(gui.get_node("analog"), { radius = 80 }, on_analog)
 	onscreen.register_button(gui.get_node("button_a"), nil, on_control_a)
+end
+
+function final(self)
+	onscreen.reset()
 end
 
 function on_message(self, message_id, message, sender)

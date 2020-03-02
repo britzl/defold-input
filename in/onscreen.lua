@@ -85,6 +85,12 @@ function M.create(config)
 		}
 	end
 
+	function instance.reset()
+		for k,_ in pairs(controls) do
+			controls[k] = nil
+		end
+	end
+	
 	--- Register an on-screen button
 	-- Will generate onscreen.BUTTON_PRESSED and onscreen.BUTTON_RELEASED
 	-- @param node The node representing the button
@@ -153,6 +159,11 @@ end
 
 local singleton = M.create()
 
+function M.reset(instance)
+	instance = instance or singleton
+	return instance.reset()
+end
+
 function M.register_button(node, settings, fn, instance)
 	instance = instance or singleton
 	return instance.register_button(node, settings, fn)
@@ -168,4 +179,5 @@ function M.on_input(action_id, action, instance)
 	return instance.on_input(action_id, action)
 end
 
+pprint(...)
 return M
