@@ -91,7 +91,7 @@ local function notify_event(self, game_object_id, game_object_group, action, mes
 		msg.post(".", message_id, message)
 	end
 	if game_object_id and exists then
-		msg.post(game_object_id, message_id)
+		msg.post(game_object_id, message_id, message)
 	end
 end
 
