@@ -1,0 +1,31 @@
+local cursor = require "in.cursor"
+
+local function shake(self)
+	go.cancel_animations(".", "scale.x")
+	go.cancel_animations(".", "scale.y")
+	go.set_scale(self.initial_scale)
+	local scale = go.get_scale()
+	go.set_scale(scale * 1.2)
+	go.animate(".", "scale.x", go.PLAYBACK_ONCE_FORWARD, scale.x, go.EASING_OUTELASTIC, 0.8)
+	go.animate(".", "scale.y", go.PLAYBACK_ONCE_FORWARD, scale.y, go.EASING_OUTELASTIC, 0.8, 0, function()
+		go.set_scale(self.initial_scale)
+	end)
+end
+
+function init(self)
+	self.initial_scale = go.get_scale()
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == cursor.OVER then
+		self.over_pos = go.get_position()
+		go.set_position(vmath.vector3(self.over_pos.x, self.over_pos.y, 1))
+		go.animate("#sprite", "tint.w", go.PLAYBACK_ONCE_FORWARD, 1.5, go.EASING_OUTQUAD, 0.1)
+	elseif message_id == cursor.OUT then
+		local pos = go.get_position()
+		go.set_position(vmath.vector3(pos.x, pos.y, self.over_pos.z))
+		go.animate("#sprite", "tint.w", go.PLAYBACK_ONCE_FORWARD, 1, go.EASING_OUTQUAD, 0.1)
+	elseif message_id == cursor.PRESSED or message_id == cursor.RELEASED then
+		shake(self)
+	end
+end

@@ -1,0 +1,44 @@
+local camera = require "orthographic.camera"
+local cursor = require "in.cursor"
+
+local CAMERA_ID = hash("/camera")
+
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+end
+
+function on_input(self, action_id, action)
+	local screen = vmath.vector3(action.x, action.y, 0)
+	local world = camera.screen_to_world(CAMERA_ID, screen)
+	action.x = world.x
+	action.y = world.y
+	msg.post("#cursor", "input", { action_id = action_id, action = action })
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == cursor.OVER then
+		print("Cursor over", message.id, message.group, message.x, message.y)
+		label.set_text("info#events", "Cursor over")
+	elseif message_id == cursor.OUT then
+		print("Cursor out", message.id, message.group, message.x, message.y)
+		label.set_text("info#events", "Cursor out")
+	elseif message_id == cursor.PRESSED then
+		print("Pressed", message.id, message.group, message.x, message.y)
+		label.set_text("info#events", "Pressed")
+	elseif message_id == cursor.RELEASED then
+		print("Released", message.id, message.group, message.x, message.y)
+		label.set_text("info#events", "Released")
+		if message.group == hash("blue") then
+			go.delete(message.id)
+		elseif message.group == hash("checkpoint") then
+			camera.follow(CAMERA_ID, message.id, { lerp = 0.5 })
+		end
+	elseif message_id == cursor.DRAG_START then
+		print("Drag started", message.id, message.group, message.x, message.y)
+		label.set_text("info#events", "Drag started")
+	elseif message_id == cursor.DRAG_END then
+		print("Drag ended", message.id, message.group, message.x, message.y)
+		label.set_text("info#events", "Drag ended")
+	end
+end

@@ -1,11 +1,11 @@
 [project]
 title = Defold-Input
 version = 0.1
-dependencies = https://github.com/britzl/deftest/archive/2.6.0.zip,https://github.com/britzl/defold-indexhtml/archive/master.zip
+dependencies = https://github.com/britzl/deftest/archive/2.6.0.zip,https://github.com/britzl/defold-indexhtml/archive/master.zip,https://github.com/britzl/defold-orthographic/archive/2.10.0.zip
 
 [bootstrap]
 main_collection = /examples/examples.collectionc
-render = /builtins/render/default.renderc
+render = /orthographic/render/orthographic.renderc
 
 [input]
 game_binding = /in/bindings/all.input_bindingc

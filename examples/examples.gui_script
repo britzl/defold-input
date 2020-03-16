@@ -25,7 +25,7 @@ function init(self)
 	end)
 
 	local examples = {
-		"gesture", "mapper", "cursor", "tester", "accelerometer", "button", "keyboard", "cursor_and_gesture", "onscreen"
+		"gesture", "mapper", "cursor", "tester", "accelerometer", "button", "keyboard", "cursor_and_gesture", "onscreen", "cursor_and_camera"
 	}
 
 	for _,example in ipairs(examples) do
@@ -46,7 +46,11 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("proxy_loaded") then
+		print("disable")
+		msg.post("/menucamera", "disable")
 		msg.post(sender, "enable")
+	elseif message_id == hash("proxy_unloaded") then
+		msg.post("/menucamera", "enable")
 	end
 end
 

@@ -1,4 +1,24 @@
 name: "examples"
+instances {
+  id: "menucamera"
+  prototype: "/orthographic/camera.go"
+  position {
+    x: 320.0
+    y: 568.0
+    z: 0.0
+  }
+  rotation {
+    x: 0.0
+    y: 0.0
+    z: 0.0
+    w: 1.0
+  }
+  scale3 {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+}
 scale_along_z: 0
 embedded_instances {
   id: "go"
@@ -165,6 +185,24 @@ embedded_instances {
   "  id: \"onscreenproxy\"\n"
   "  type: \"collectionproxy\"\n"
   "  data: \"collection: \\\"/examples/onscreen/onscreen.collection\\\"\\n"
+  "exclude: false\\n"
+  "\"\n"
+  "  position {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "  }\n"
+  "  rotation {\n"
+  "    x: 0.0\n"
+  "    y: 0.0\n"
+  "    z: 0.0\n"
+  "    w: 1.0\n"
+  "  }\n"
+  "}\n"
+  "embedded_components {\n"
+  "  id: \"cursor_and_cameraproxy\"\n"
+  "  type: \"collectionproxy\"\n"
+  "  data: \"collection: \\\"/examples/cursor_and_camera/cursor_and_camera.collection\\\"\\n"
   "exclude: false\\n"
   "\"\n"
   "  position {\n"
