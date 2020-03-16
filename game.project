@@ -1,7 +1,7 @@
 [project]
 title = Defold-Input
 version = 0.1
-dependencies = https://github.com/britzl/deftest/archive/2.6.0.zip,https://github.com/britzl/defold-indexhtml/archive/master.zip,https://github.com/britzl/defold-orthographic/archive/2.10.0.zip
+dependencies = https://github.com/britzl/deftest/archive/2.6.0.zip,https://github.com/britzl/defold-orthographic/archive/2.10.0.zip
 
 [bootstrap]
 main_collection = /examples/examples.collectionc
@@ -47,5 +47,7 @@ bundle_identifier = com.britzl.defold.input
 bundle_identifier = com.britzl.defold.input
 
 [html5]
-htmlfile = /index.html
+show_fullscreen_button = 0
+show_made_with_defold = 0
+cssfile = /builtins/manifests/web/dark_theme.css
 
