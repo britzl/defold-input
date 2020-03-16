@@ -2,6 +2,7 @@ local input_state = require "in.state"
 local input_mapper = require "in.mapper"
 local actions = require "examples.mapper.actions"
 
+go.property("player_id", 1)
 go.property("speed", 200)
 
 local function play_animation(self, animation)
@@ -40,6 +41,7 @@ function on_message(self, message_id, message, sender)
 end
 
 function on_input(self, action_id, action)
+	print("fooo", action_id)
 	self.input_state.on_input(input_mapper.on_input(action_id, self.player_id), action)
 end
 

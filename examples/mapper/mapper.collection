@@ -34,6 +34,14 @@ instances {
     w: 1.0
   }
   component_properties {
+    id: "script"
+    properties {
+      id: "player_id"
+      value: "2.0"
+      type: PROPERTY_TYPE_NUMBER
+    }
+  }
+  component_properties {
     id: "mapper"
     properties {
       id: "player_id"
