@@ -13,4 +13,4 @@ env:
 
 
 script:
-  - "./.travis/run.sh"
+  - "./.test/run.sh"
