@@ -1,23 +1,9 @@
-sudo: required
-
-script:
-  - sudo unlink /usr/bin/gcc && sudo ln -s /usr/bin/gcc-5 /usr/bin/gcc
-  - gcc --version
-
-addons:
-  apt:
-    sources:
-    - ubuntu-toolchain-r-test
-    packages:
-    - gcc-5
-    - g++-5
-
 language: java
+
+dist: bionic
 
 jdk:
   - oraclejdk11
-
-dist: trusty
 
 env:
   global:
@@ -25,5 +11,6 @@ env:
     - DEFOLD_USER=bjorn.ritzl@gmail.com
     - DEFOLD_BOOSTRAP_COLLECTION=/test/test.collectionc
 
+
 script:
-  - "./.test/run.sh"
+  - "./.travis/run.sh"
