@@ -212,9 +212,14 @@ end
 function on_message(self, message_id, message, sender)
 	if message_id == COLLISION_RESPONSE then
 		if self.collisionobject_filter == EMPTY_FILTER or self.collisionobject_filter == sender.fragment then
+			-- always pick the topmost collision object
+			-- but ignore the object we are dragging
+			-- we want to be able to get mouse over/out events while dragging
 			if not self.collision_id or go.get_position(self.collision_id).z < message.other_position.z then
-				self.collision_id = message.other_id
-				self.collision_group = message.other_group
+				if not self.state.dragging or (self.state.dragging and message.other_id ~= self.state.pressed_id) then
+					self.collision_id = message.other_id
+					self.collision_group = message.other_group
+				end
 			end
 		end
 	elseif message_id == INPUT then
