@@ -64,6 +64,8 @@ function init(self)
 	self.pressed = false
 	self.released = false
 
+	self.action = {}
+	
 	self.state = {
 		pressed = false,
 		dragging = false,
