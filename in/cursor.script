@@ -5,11 +5,13 @@ local cursor = require "in.cursor"
 go.property("action_id", hash("touch"))
 go.property("drag", true)
 go.property("drag_threshold", 20)
+go.property("collisionobject_filter", hash(""))
 go.property("acquire_input_focus", false)
 go.property("notify_own_gameobject", true)
 
 local COLLISION_RESPONSE = hash("collision_response")
 local INPUT = hash("input")
+local EMPTY_FILTER = hash("")
 
 local action_pos = vmath.vector3()
 local function handle_input(self, action_id, action)
@@ -209,9 +211,11 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == COLLISION_RESPONSE then
-		if not self.collision_id or go.get_position(self.collision_id).z < message.other_position.z then
-			self.collision_id = message.other_id
-			self.collision_group = message.other_group
+		if self.collisionobject_filter == EMPTY_FILTER or self.collisionobject_filter == sender.fragment then
+			if not self.collision_id or go.get_position(self.collision_id).z < message.other_position.z then
+				self.collision_id = message.other_id
+				self.collision_group = message.other_group
+			end
 		end
 	elseif message_id == INPUT then
 		handle_input(self, message.action_id, message.action)

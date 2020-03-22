@@ -10,6 +10,7 @@ The script has the following properties:
 * `action_id` - (hash) The action_id that corresponds to a press/click/interact action (default: "touch")
 * `drag` - (boolean) If the cursor should be able to drag game objects
 * `drag_threshold` - (number) Distance the cursor has to move from a pressed object before it's considered dragged
+* `collisionobject_filter` - (hash) Id of a collision object component. If specified the cursor script will only accept collision messages from this id.
 * `acquire_input_focus` - (boolean) Check if the script should acquire input and handle input events itself
 * `notify_own_gameobject` - (boolean) Check if cursor messages should be sent not only to the interacting game object but also to the game object this script is attached to.
 
