@@ -5,6 +5,13 @@ function init(self)
 		self.forward_input = true
 		msg.post(".", "acquire_input_focus")
 	end
+
+	cursor.listen(msg.url("#cursor"), cursor.DRAG_START, function(message_id, message)
+		-- prevent dragging of blue aliens
+		if message.group == hash("blue") then
+			return true
+		end
+	end)
 end
 
 function on_input(self, action_id, action)
@@ -26,6 +33,9 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == cursor.RELEASED then
 		print("Released", message.id, message.group, message.x, message.y)
 		label.set_text("info#events", "Released")
+	elseif message_id == cursor.CLICKED then
+		print("Clicked", message.id, message.group, message.x, message.y)
+		label.set_text("info#events", "Clicked")
 		if message.group == hash("blue") then
 			go.delete(message.id)
 		end
