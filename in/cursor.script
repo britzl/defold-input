@@ -79,6 +79,7 @@ function final(self)
 end
 
 local function go_exists(id)
+	if not id then return false end
 	local exists,_ = pcall(function()
 		go.get_position(id)
 	end)
@@ -95,14 +96,14 @@ local function trigger_event(self, game_object_id, game_object_group, action, me
 	message.y = action.y
 	local ok = cursor.trigger(message_id, message)
 	if ok then
-		-- pcall to check if the game object exists since it might have been deleted
-		-- typically a cursor_out message that is generated when the game object is deleted
 		if self.notify_own_gameobject then
 			msg.post(".", message_id, message)
 		end
 
+		-- pcall to check if the game object exists since it might have been deleted
+		-- typically a cursor_out message that is generated when the game object is deleted
 		local exists = go_exists(game_object_id)
-		if game_object_id and exists then
+		if exists then
 			msg.post(game_object_id, message_id, message)
 		end
 	end
