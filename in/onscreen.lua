@@ -15,6 +15,8 @@ function M.create(config)
 	config = config or {}
 	config.touch = config.touch or hash("touch")
 
+	local multitouch_enabled = false
+
 	local instance = {}
 
 	local controls = {}
@@ -86,6 +88,7 @@ function M.create(config)
 	end
 
 	function instance.reset()
+		multitouch_enabled = false
 		for k,_ in pairs(controls) do
 			controls[k] = nil
 		end
@@ -145,11 +148,11 @@ function M.create(config)
 	function instance.on_input(action_id, action)
 		assert(action, "You must provide an action table")
 		if action.touch then
+			multitouch_enabled = true
 			for i,tp in pairs(action.touch) do
-				handle_touch(tp, i)
 				handle_touch(tp, tp.id)
 			end
-		elseif action_id == config.touch then
+		elseif action_id == config.touch and not multitouch_enabled then
 			handle_touch(action, 0)
 		end
 	end
