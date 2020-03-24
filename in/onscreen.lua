@@ -147,6 +147,7 @@ function M.create(config)
 		if action.touch then
 			for i,tp in pairs(action.touch) do
 				handle_touch(tp, i)
+				handle_touch(tp, tp.id)
 			end
 		elseif action_id == config.touch then
 			handle_touch(action, 0)
