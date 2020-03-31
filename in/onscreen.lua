@@ -90,7 +90,7 @@ function M.create(config)
 
 	local function find_control_for_touch_index(touch_index)
 		for node,control in pairs(controls) do
-			if control.touch_position_index == touch_index then
+			if control.touch_index == touch_index then
 				return control, node
 			end
 		end
@@ -149,7 +149,7 @@ function M.create(config)
 				control.touch_position.y = touch.y
 				control.pressed = true
 				control.released = false
-				control.touch_position_index = touch_index
+				control.touch_index = touch_index
 				control.handler(control, node)
 			end
 		elseif touch.released then
@@ -159,7 +159,7 @@ function M.create(config)
 				control.touch_position.y = touch.y
 				control.pressed = false
 				control.released = true
-				control.touch_position_index = nil
+				control.touch_index = nil
 				control.handler(control, node)
 			end
 		else
@@ -181,7 +181,7 @@ function M.create(config)
 		assert(action, "You must provide an action table")
 		if action.touch then
 			multitouch_enabled = true
-			for i,tp in pairs(action.touch_position) do
+			for i,tp in pairs(action.touch) do
 				handle_touch(tp, tp.id)
 			end
 		elseif action_id == config.touch and not multitouch_enabled then
