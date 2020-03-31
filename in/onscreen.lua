@@ -15,7 +15,7 @@ M.ANALOG_MOVED = hash("analog_moved")
 -- @return instance
 function M.create(config)
 	config = config or {}
-	config.touch_position = config.touch_position or hash("touch")
+	config.touch = config.touch or hash("touch")
 
 	local multitouch_enabled = false
 
@@ -179,12 +179,12 @@ function M.create(config)
 	-- @param action
 	function instance.on_input(action_id, action)
 		assert(action, "You must provide an action table")
-		if action.touch_position then
+		if action.touch then
 			multitouch_enabled = true
 			for i,tp in pairs(action.touch_position) do
 				handle_touch(tp, tp.id)
 			end
-		elseif action_id == config.touch_position and not multitouch_enabled then
+		elseif action_id == config.touch and not multitouch_enabled then
 			handle_touch(action, 0)
 		end
 	end
