@@ -2,24 +2,29 @@ local onscreen = require "in.onscreen"
 
 local post_to_listener
 
-local function on_analog(action, control, touch)
-	if action == onscreen.ANALOG_PRESSED then
-		print("analog pressed")
+local function on_analog(touch)
+	if touch.pressed then
 		post_to_listener("analog", { x = 0, y = 0, pressed = true })
-	elseif action == onscreen.ANALOG_RELEASED then
-		print("analog released")
+	elseif touch.released then
 		post_to_listener("analog", { x = 0, y = 0, released = true })
-	elseif action == onscreen.ANALOG_MOVED then
-		print("analog moved")
+	else
 		post_to_listener("analog", { x = touch.x, y = touch.y })
 	end
 end
 
-local function on_control_a(action, control, touch)
-	if action == onscreen.BUTTON_PRESSED then
+local function on_button(touch)
+	if touch.pressed then
 		post_to_listener("button_a", { pressed = true })
-	elseif action == onscreen.BUTTON_RELEASED then
+	elseif touch.released then
 		post_to_listener("button_a", { released = true })
+	end
+end
+
+local function on_control(action, node, touch)
+	if action == onscreen.ANALOG then
+		on_analog(touch)
+	elseif action == onscreen.BUTTON then
+		on_button(touch)
 	end
 end
 
@@ -32,8 +37,8 @@ function init(self)
 		end
 	end
 
-	onscreen.register_analog(gui.get_node("analog"), { radius = 80 }, on_analog)
-	onscreen.register_button(gui.get_node("button_a"), nil, on_control_a)
+	onscreen.register_analog(gui.get_node("analog"), { radius = 80 }, on_control)
+	onscreen.register_button(gui.get_node("button_a"), nil, on_control)
 end
 
 function final(self)

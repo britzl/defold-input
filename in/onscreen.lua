@@ -1,5 +1,7 @@
 local M = {}
 
+M.BUTTON = hash("onscreen_button")
+M.ANALOG = hash("onscreen_analog")
 
 M.BUTTON_PRESSED = hash("button_pressed")
 M.BUTTON_RELEASED = hash("button_released")
@@ -24,62 +26,70 @@ function M.create(config)
 	local BUTTON = hash("button")
 	local ANALOG = hash("analog")
 
-	local function handle_button(control, touch)
-		if touch.pressed then
-			control.fn(M.BUTTON_PRESSED, control.node, {})
-		elseif touch.released then
-			control.fn(M.BUTTON_RELEASED, control.node, {})
+	local function handle_button(control, node)
+		if control.pressed then
+			control.fn(M.BUTTON_PRESSED, node, control)
+		elseif control.released then
+			control.fn(M.BUTTON_RELEASED, node, control)
 		end
+		control.fn(M.BUTTON, node, control)
 	end
 
-	local function handle_analog(control, touch)
-		local touch_position = vmath.vector3(touch.x, touch.y, 0)
-		if touch.pressed then
-			gui.cancel_animation(control.node, gui.PROP_POSITION)
-			control.analog_pos = touch_position
-			control.analog_offset = touch_position - control.node_start_position
-			control.fn(M.ANALOG_PRESSED, control.node, { x = 0, y = 0 })
-		elseif touch.released then
-			gui.animate(control.node, gui.PROP_POSITION, control.node_start_position, gui.EASING_OUTQUAD, 0.2)
-			control.fn(M.ANALOG_RELEASED, control.node, { x = 0, y = 0 })
+	local function handle_analog(control, node)
+		if control.pressed then
+			gui.cancel_animation(node, gui.PROP_POSITION)
+			control.x = 0
+			control.y = 0
+			control.analog_pos = vmath.vector3(control.touch_position)
+			control.analog_offset = control.touch_position - control.start_position
+			control.fn(M.ANALOG_PRESSED, node, control)
+		elseif control.released then
+			gui.animate(node, gui.PROP_POSITION, control.start_position, gui.EASING_OUTQUAD, 0.2)
+			control.x = 0
+			control.y = 0
+			control.fn(M.ANALOG_RELEASED, node, control)
 		else
-			local diff = control.analog_pos - touch_position
+			local diff = control.analog_pos - control.touch_position
 			local dir = vmath.normalize(diff)
 			local distance = vmath.length(diff)
 			if distance > 0 then
 				local radius = control.settings.radius or 80
 				if distance > radius then
-					touch_position = control.node_start_position - dir * radius
+					control.touch_position = control.start_position - dir * radius
 					distance = radius
 				else
-					touch_position = touch_position - control.analog_offset	
+					control.touch_position = control.touch_position - control.analog_offset	
 				end
-				gui.set_position(control.node, touch_position)
-				control.fn(M.ANALOG_MOVED, control.node, { x = -dir.x * distance / radius, y = -dir.y * distance / radius })
+				gui.set_position(node, control.touch_position)
+				control.x = -dir.x * distance / radius
+				control.y = -dir.y * distance / radius
+				control.fn(M.ANALOG_MOVED, node, control)
 			end
 		end
+		control.fn(M.ANALOG, node, control)
 	end
 
 	local function find_control_for_xy(x, y)
-		for _,control in pairs(controls) do
-			if gui.pick_node(control.node, x, y) then
-				return control
+		for node,control in pairs(controls) do
+			if gui.pick_node(node, x, y) then
+				return control, node
 			end
 		end
 	end
 
 	local function find_control_for_touch_index(touch_index)
-		for _,control in pairs(controls) do
+		for node,control in pairs(controls) do
 			if control.touch_index == touch_index then
-				return control
+				return control, node
 			end
 		end
 	end
 
 	local function register_control(node, handler, settings, fn)
 		controls[node] = {
-			node_start_position = gui.get_position(node),
-			node = node,
+			start_position = gui.get_position(node),
+			touch_position = vmath.vector3(),
+			id = gui.get_id(node),
 			pressed = false,
 			fn = fn,
 			settings = settings,
@@ -121,23 +131,33 @@ function M.create(config)
 
 	local function handle_touch(touch, touch_index)
 		if touch.pressed then
-			local control = find_control_for_xy(touch.x, touch.y)
+			local control, node = find_control_for_xy(touch.x, touch.y)
 			if control and not control.pressed then
+				control.touch_position.x = touch.x
+				control.touch_position.y = touch.y
 				control.pressed = true
+				control.released = false
 				control.touch_index = touch_index
-				control.handler(control, touch)
+				control.handler(control, node)
 			end
 		elseif touch.released then
-			local control = find_control_for_touch_index(touch_index)
+			local control, node = find_control_for_touch_index(touch_index)
 			if control then
+				control.touch_position.x = touch.x
+				control.touch_position.y = touch.y
 				control.pressed = false
+				control.released = true
 				control.touch_index = nil
-				control.handler(control, touch)
+				control.handler(control, node)
 			end
 		else
-			local control = find_control_for_touch_index(touch_index)
+			local control, node = find_control_for_touch_index(touch_index)
 			if control then
-				control.handler(control, touch)
+				control.touch_position.x = touch.x
+				control.touch_position.y = touch.y
+				control.pressed = false
+				control.released = false
+				control.handler(control, node)
 			end
 		end
 	end
