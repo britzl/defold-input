@@ -15,7 +15,7 @@ M.ANALOG_MOVED = hash("analog_moved")
 -- @return instance
 function M.create(config)
 	config = config or {}
-	config.touch = config.touch or hash("touch")
+	config.touch_position = config.touch_position or hash("touch")
 
 	local multitouch_enabled = false
 
@@ -26,13 +26,24 @@ function M.create(config)
 	local BUTTON = hash("button")
 	local ANALOG = hash("analog")
 
+	local function create_data(control)
+		local data = {
+			x = control.x,
+			y = control.y,
+			id = control.id,
+			pressed = control.pressed,
+			released = control.released,
+		}
+		return data
+	end
+	
 	local function handle_button(control, node)
 		if control.pressed then
-			control.fn(M.BUTTON_PRESSED, node, control)
+			control.fn(M.BUTTON_PRESSED, node, create_data(control))
 		elseif control.released then
-			control.fn(M.BUTTON_RELEASED, node, control)
+			control.fn(M.BUTTON_RELEASED, node, create_data(control))
 		end
-		control.fn(M.BUTTON, node, control)
+		control.fn(M.BUTTON, node, create_data(control))
 	end
 
 	local function handle_analog(control, node)
@@ -42,12 +53,12 @@ function M.create(config)
 			control.y = 0
 			control.analog_pos = vmath.vector3(control.touch_position)
 			control.analog_offset = control.touch_position - control.start_position
-			control.fn(M.ANALOG_PRESSED, node, control)
+			control.fn(M.ANALOG_PRESSED, node, create_data(control))
 		elseif control.released then
 			gui.animate(node, gui.PROP_POSITION, control.start_position, gui.EASING_OUTQUAD, 0.2)
 			control.x = 0
 			control.y = 0
-			control.fn(M.ANALOG_RELEASED, node, control)
+			control.fn(M.ANALOG_RELEASED, node, create_data(control))
 		else
 			local diff = control.analog_pos - control.touch_position
 			local dir = vmath.normalize(diff)
@@ -63,10 +74,10 @@ function M.create(config)
 				gui.set_position(node, control.touch_position)
 				control.x = -dir.x * distance / radius
 				control.y = -dir.y * distance / radius
-				control.fn(M.ANALOG_MOVED, node, control)
+				control.fn(M.ANALOG_MOVED, node, create_data(control))
 			end
 		end
-		control.fn(M.ANALOG, node, control)
+		control.fn(M.ANALOG, node, create_data(control))
 	end
 
 	local function find_control_for_xy(x, y)
@@ -79,17 +90,18 @@ function M.create(config)
 
 	local function find_control_for_touch_index(touch_index)
 		for node,control in pairs(controls) do
-			if control.touch_index == touch_index then
+			if control.touch_position_index == touch_index then
 				return control, node
 			end
 		end
 	end
 
 	local function register_control(node, handler, settings, fn)
+		local id = gui.get_id(node)
 		controls[node] = {
 			start_position = gui.get_position(node),
 			touch_position = vmath.vector3(),
-			id = gui.get_id(node),
+			id = id,
 			pressed = false,
 			fn = fn,
 			settings = settings,
@@ -137,7 +149,7 @@ function M.create(config)
 				control.touch_position.y = touch.y
 				control.pressed = true
 				control.released = false
-				control.touch_index = touch_index
+				control.touch_position_index = touch_index
 				control.handler(control, node)
 			end
 		elseif touch.released then
@@ -147,7 +159,7 @@ function M.create(config)
 				control.touch_position.y = touch.y
 				control.pressed = false
 				control.released = true
-				control.touch_index = nil
+				control.touch_position_index = nil
 				control.handler(control, node)
 			end
 		else
@@ -167,12 +179,12 @@ function M.create(config)
 	-- @param action
 	function instance.on_input(action_id, action)
 		assert(action, "You must provide an action table")
-		if action.touch then
+		if action.touch_position then
 			multitouch_enabled = true
-			for i,tp in pairs(action.touch) do
+			for i,tp in pairs(action.touch_position) do
 				handle_touch(tp, tp.id)
 			end
-		elseif action_id == config.touch and not multitouch_enabled then
+		elseif action_id == config.touch_position and not multitouch_enabled then
 			handle_touch(action, 0)
 		end
 	end
