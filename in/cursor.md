@@ -4,8 +4,10 @@ Use the cursor script to simplify user interaction such as clicking and dragging
 # Usage
 Attach the `cursor.script` to a game object that should act as a cursor. The game object must have either a kinematic or trigger collision object with a group and mask that matches other collision objects that should be able to interact with the cursor.
 
+IMPORTANT: You must make sure to configure the cursor.script `action_id` field (see below) to match the binding you have in your input bindings for the left mouse button/mouse button 1. The script assumes that the binding has action set to `touch`. 
+
 ## Script properties
-The script has the following properties:
+The script has the following [script properties](https://defold.com/manuals/script-properties/):
 
 * `action_id` - (hash) The action_id that corresponds to a press/click/interact action (default: "touch")
 * `drag` - (boolean) If the cursor should be able to drag game objects
