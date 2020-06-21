@@ -20,6 +20,9 @@ M.SETTINGS = {
 
 	--- minimum time of a pressed/release sequence to consider it a long press
 	long_press_time = 0.5,
+
+	--- if multi touch gestures should be handled or not
+	multi_touch = true,
 }
 
 
@@ -63,6 +66,9 @@ function M.create(settings)
 	settings.swipe_threshold = settings.swipe_threshold or M.SETTINGS.swipe_threshold
 	settings.swipe_time = settings.swipe_time or M.SETTINGS.swipe_time
 	settings.long_press_time = settings.long_press_time or M.SETTINGS.long_press_time
+	if settings.multi_touch == nil then
+		settings.multi_touch = M.SETTINGS.multi_touch
+	end
 
 	local instance = {}
 
