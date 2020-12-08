@@ -124,9 +124,12 @@ function update(self, dt)
 	--
 	-- EARLY RELEASE+OUT
 	-- if we are not dragging something and the thing we pressed is no longer under
-	-- the cursor it is likely that it was deleted by an OVER or PRESSED event
-	-- in this case we clear pressed and over state 
+	-- the cursor it was either
+	-- 1. deleted by an OVER or PRESSED event 
+	-- 2. not draggable and the cursor moved outside while pressed
+	-- in both cases we clear pressed and over state and generate an OUT event
 	if self.state.pressed and self.state.pressed_id and not self.collision_id and not self.state.dragging then
+		trigger_event(self, self.state.over_id, self.state.over_group, self.action, cursor.OUT)
 		self.state.pressed = false
 		self.state.pressed_id = nil
 		self.state.pressed_group = nil
