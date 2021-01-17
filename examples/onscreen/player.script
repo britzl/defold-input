@@ -14,16 +14,16 @@ function update(self, dt)
 end
 
 function on_message(self, message_id, message, sender)
-	if message_id == hash("button_a") and message.released then
+	if message_id == hash("onscreen_button") and message.id == hash("button_a") and message.released then
 		print("laser")
 		local pos = go.get_position() + vmath.vector3(0, 50, 0)
 		local id = factory.create("#laserfactory", pos)
 		go.animate(id, "position.y", go.PLAYBACK_ONCE_FORWARD, pos.y + 1500, go.EASING_LINEAR, 0.8, 0, function()
 			go.delete(id)
 		end)
-	elseif message_id == hash("button_b") and message.released then
+	elseif message_id == hash("onscreen_button") and message.id == hash("button_b") and message.released then
 		print("smartbomb")
-	elseif message_id == hash("analog") then
+	elseif message_id == hash("onscreen_analog") then
 		self.speed.x = message.x * 200
 		self.speed.y = message.y * 200
 	end

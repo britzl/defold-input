@@ -3,11 +3,11 @@ local onscreen = require "in.onscreen"
 local post_to_listener
 
 local function on_analog(action_id, node, action)
-	post_to_listener(action.id, action)
+	post_to_listener(action_id, action)
 end
 
 local function on_button(action_id, node, action)
-	post_to_listener(action.id, action)
+	post_to_listener(action_id, action)
 end
 
 function init(self)
