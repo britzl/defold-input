@@ -28,8 +28,8 @@ function M.create(config)
 
 	local function create_data(control)
 		local data = {
-			x = control.x,
-			y = control.y,
+			x = control.x or 0,
+			y = control.y or 0,
 			id = control.id,
 			pressed = control.pressed,
 			released = control.released,
@@ -47,6 +47,7 @@ function M.create(config)
 	end
 
 	local function handle_analog(control, node)
+		control.fn(M.ANALOG, node, create_data(control))
 		if control.pressed then
 			gui.cancel_animation(node, gui.PROP_POSITION)
 			control.x = 0
@@ -77,7 +78,6 @@ function M.create(config)
 				control.fn(M.ANALOG_MOVED, node, create_data(control))
 			end
 		end
-		control.fn(M.ANALOG, node, create_data(control))
 	end
 
 	local function find_control_for_xy(x, y)

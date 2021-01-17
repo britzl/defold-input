@@ -24,7 +24,12 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == hash("onscreen_button") and message.id == hash("button_b") and message.released then
 		print("smartbomb")
 	elseif message_id == hash("onscreen_analog") then
-		self.speed.x = message.x * 200
-		self.speed.y = message.y * 200
+		if message.released then
+			self.speed.x = 0
+			self.speed.y = 0
+		else
+			self.speed.x = message.x * 200
+			self.speed.y = message.y * 200
+		end
 	end
 end
