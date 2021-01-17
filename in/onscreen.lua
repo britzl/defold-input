@@ -56,9 +56,9 @@ function M.create(config)
 			control.fn(M.ANALOG_PRESSED, node, create_data(control))
 		elseif control.released then
 			gui.animate(node, gui.PROP_POSITION, control.start_position, gui.EASING_OUTQUAD, 0.2)
+			control.fn(M.ANALOG_RELEASED, node, create_data(control))
 			control.x = 0
 			control.y = 0
-			control.fn(M.ANALOG_RELEASED, node, create_data(control))
 		else
 			local diff = control.analog_pos - control.touch_position
 			local dir = vmath.normalize(diff)
