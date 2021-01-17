@@ -1,4 +1,4 @@
-script: "/examples/onscreen/onscreen.gui_script"
+script: "/in/onscreen.gui_script"
 textures {
   name: "gamepad"
   texture: "/examples/assets/gamepad.atlas"

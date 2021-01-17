@@ -1,0 +1,47 @@
+local onscreen = require "in.onscreen"
+
+local post_to_listener
+
+local function on_analog(action_id, node, action)
+	post_to_listener(action.id, action)
+end
+
+local function on_button(action_id, node, action)
+	post_to_listener(action.id, action)
+end
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+
+	self.analog = {}
+	self.buttons = {}
+
+	post_to_listener = function(message_id, message)
+		if self.listener then
+			msg.post(self.listener, message_id, message or {})
+		end
+	end
+end
+
+function final(self)
+	onscreen.reset()
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("register") then
+		self.listener = sender
+	elseif message_id == hash("unregister") then
+		self.listener = nil
+	elseif message_id == hash("register_analog") then
+		assert(message.id, "You must provide a node id for the analog control")
+		assert(message.radius, "You must provide a radius for the analog control")
+		onscreen.register_analog(gui.get_node(message.id), { radius = message.radius }, on_analog)
+	elseif message_id == hash("register_button") then
+		assert(message.id, "You must provide a node id for the button")
+		onscreen.register_button(gui.get_node(message.id), nil, on_button)
+	end
+end
+
+function on_input(self, action_id, action)
+	onscreen.on_input(action_id, action)
+end
