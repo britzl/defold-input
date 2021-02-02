@@ -248,5 +248,4 @@ function M.on_input(action_id, action, instance)
 	return instance.on_input(action_id, action)
 end
 
-pprint(...)
 return M
