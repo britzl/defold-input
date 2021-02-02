@@ -55,13 +55,14 @@ function M.create(config)
 			current = current * -1
 			threshold = threshold * -1
 		end
-		local pressed = previous < threshold and current >= threshold
-		local released = (previous >= threshold and current < threshold) or (current >= threshold and control.released)
-		if pressed or released then
-			control.pressed = pressed
-			control.released = released
-			control.fn(action, node, create_data(control))
+		if current < threshold then
+			return
 		end
+		control.pressed = previous < threshold and current >= threshold
+		control.released = (previous >= threshold and current < threshold) or (current >= threshold and control.released)
+		if control.pressed == nil then control.pressed = false end
+		if control.released == nil then control.released = false end
+		control.fn(action, node, create_data(control))
 	end
 
 	local function handle_analog(control, node)
