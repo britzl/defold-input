@@ -19,11 +19,15 @@ The `onscreen.lua` module can be used directly in any script dealing with user/p
 			else
 				print("moved analog", touch.id, touch.x, touch.y)
 			end
+		elseif action == onscreen.ANALOG_UP then
+			if touch.pressed then
+				print("analog stick is pushed up beyond specified threshold")
+			end
 		end
 	end
 
 	function init(self)
-		onscreen.register_analog(gui.get_node("analog"), { radius = 80 }, on_control)
+		onscreen.register_analog(gui.get_node("analog"), { radius = 80, threshold = 0.9 }, on_control)
 		onscreen.register_button(gui.get_node("button_a"), nil, on_control)
 	end
 

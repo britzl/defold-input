@@ -5,9 +5,15 @@ M.ANALOG = hash("onscreen_analog")
 
 M.BUTTON_PRESSED = hash("button_pressed")
 M.BUTTON_RELEASED = hash("button_released")
+
 M.ANALOG_PRESSED = hash("analog_pressed")
 M.ANALOG_RELEASED = hash("analog_released")
 M.ANALOG_MOVED = hash("analog_moved")
+
+M.ANALOG_LEFT = hash("analog_left")
+M.ANALOG_RIGHT = hash("analog_right")
+M.ANALOG_UP = hash("analog_up")
+M.ANALOG_DOWN = hash("analog_down")
 
 -- Create an instance of onscreen controls
 -- @param config Optional table with configuration values. Accepted values are:
@@ -22,9 +28,6 @@ function M.create(config)
 	local instance = {}
 
 	local controls = {}
-
-	local BUTTON = hash("button")
-	local ANALOG = hash("analog")
 
 	local function create_data(control)
 		local data = {
@@ -46,8 +49,25 @@ function M.create(config)
 		control.fn(M.BUTTON, node, create_data(control))
 	end
 
+	local function check_analog_direction(control, node, action, previous, current, threshold)
+		if threshold < 0 then
+			previous = previous * -1
+			current = current * -1
+			threshold = threshold * -1
+		end
+		local pressed = previous < threshold and current >= threshold
+		local released = (previous >= threshold and current < threshold) or (current >= threshold and control.released)
+		if pressed or released then
+			control.pressed = pressed
+			control.released = released
+			control.fn(action, node, create_data(control))
+		end
+	end
+
 	local function handle_analog(control, node)
 		control.fn(M.ANALOG, node, create_data(control))
+		control.prev_x = control.x or 0
+		control.prev_y = control.y or 0
 		if control.pressed then
 			gui.cancel_animation(node, gui.PROP_POSITION)
 			control.x = 0
@@ -65,7 +85,7 @@ function M.create(config)
 			local dir = vmath.normalize(diff)
 			local distance = vmath.length(diff)
 			if distance > 0 then
-				local radius = control.settings.radius or 80
+				local radius = control.settings.radius
 				if distance > radius then
 					control.touch_position = control.start_position - dir * radius
 					distance = radius
@@ -78,6 +98,11 @@ function M.create(config)
 				control.fn(M.ANALOG_MOVED, node, create_data(control))
 			end
 		end
+		local threshold = control.settings.threshold
+		check_analog_direction(control, node, M.ANALOG_UP, control.prev_y, control.y, threshold)
+		check_analog_direction(control, node, M.ANALOG_DOWN, control.prev_y, control.y, -threshold)
+		check_analog_direction(control, node, M.ANALOG_RIGHT, control.prev_x, control.x, threshold)
+		check_analog_direction(control, node, M.ANALOG_LEFT, control.prev_x, control.x, -threshold)
 	end
 
 	local function find_control_for_xy(x, y)
@@ -98,7 +123,7 @@ function M.create(config)
 
 	local function register_control(node, handler, settings, fn)
 		local id = gui.get_id(node)
-		controls[node] = {
+		local control = {
 			start_position = gui.get_position(node),
 			touch_position = vmath.vector3(),
 			id = id,
@@ -107,6 +132,8 @@ function M.create(config)
 			settings = settings,
 			handler = handler,
 		}
+		controls[node] = control
+		return control
 	end
 
 	function instance.reset()
@@ -133,12 +160,17 @@ function M.create(config)
 	-- @param node The node representing the analog stick
 	-- @param settings Optional settings table. Accepted parameters are:
 	--		* radius (number) - Radius of analog stick
+	--      * threshold (number) - Percentage of radius when directional digital input is detected
 	-- @param fn Function to call when analog stick is interacted with
 	function instance.register_analog(node, settings, fn)
 		assert(node, "You must provide a node")
 		assert(fn, "You must provide a function")
 		settings = settings or {}
-		register_control(node, handle_analog, settings, fn)
+		settings.radius = settings.radius or 80
+		settings.threshold = settings.threshold or 0.9
+		local analog = register_control(node, handle_analog, settings, fn)
+		analog.prev_x = 0
+		analog.prev_y = 0
 	end
 
 	local function handle_touch(touch, touch_index)
