@@ -92,8 +92,9 @@ local message = {}
 local function trigger_event(self, game_object_id, game_object_group, action, message_id)
 	message.id = game_object_id
 	message.group = game_object_group
-	message.x = action.x
-	message.y = action.y
+	for k,v in pairs(action) do
+		message[k] = v
+	end
 	local ok = cursor.trigger(message_id, message)
 	if ok then
 		if self.notify_own_gameobject then
@@ -142,7 +143,6 @@ function update(self, dt)
 	--
 	if self.released then
 		if self.state.pressed then
-			-- release on a game object
 			if self.state.dragging then
 				self.state.dragging = false
 				trigger_event(self, self.state.pressed_id, self.state.pressed_group, self.action, cursor.DRAG_END)
@@ -159,9 +159,6 @@ function update(self, dt)
 				self.state.over_id = nil
 				self.state.over_group = nil
 			end
-		else
-			-- release without game object
-			trigger_event(self, nil, nil, self.action, cursor.RELEASED)
 		end
 	end
 
@@ -191,18 +188,19 @@ function update(self, dt)
 	-- PRESSED
 	--
 	if self.pressed then
-		if not self.state.pressed and self.state.over_id then
+		if not self.state.pressed then
 			if trigger_event(self, self.state.over_id, self.state.over_group, self.action, cursor.PRESSED) then
 				-- pressed on a game object
 				self.state.pressed = true
 				self.state.pressed_id = self.state.over_id
 				self.state.pressed_group = self.state.over_group
 				self.state.pressed_pos = go.get_position()
-				self.state.pressed_offset = self.state.pressed_pos - go.get_position(self.state.over_id)
+				if self.state.over_id then
+					self.state.pressed_offset = self.state.pressed_pos - go.get_position(self.state.over_id)
+				else
+					self.state.pressed_offset = vmath.vector3()
+				end
 			end
-		else
-			-- pressed without a game object
-			trigger_event(self, nil, nil, self.action, cursor.PRESSED)
 		end
 	end
 
@@ -221,7 +219,7 @@ function update(self, dt)
 
 	if self.state.dragging then
 		-- move the dragged object unless it has been deleted while being dragged
-		if not go_exists(self.state.pressed_id) then
+		if self.state.pressed_id and not go_exists(self.state.pressed_id) then
 			self.state.dragging = false
 			self.state.pressed = nil
 			self.state.pressed_id = nil
@@ -231,10 +229,15 @@ function update(self, dt)
 			trigger_event(self, self.state.pressed_id, self.state.pressed_group, self.action, cursor.RELEASED)
 		else
 			-- retain the offset between the cursor and the dragged object and use the z value from the dragged object
-			cursor_pos.x = cursor_pos.x - self.state.pressed_offset.x
-			cursor_pos.y = cursor_pos.y - self.state.pressed_offset.y
-			cursor_pos.z = go.get_position(self.state.pressed_id).z
-			go.set_position(cursor_pos, self.state.pressed_id)
+			if self.state.pressed_id then
+				cursor_pos.x = cursor_pos.x - self.state.pressed_offset.x
+				cursor_pos.y = cursor_pos.y - self.state.pressed_offset.y
+				cursor_pos.z = go.get_position(self.state.pressed_id).z
+				go.set_position(cursor_pos, self.state.pressed_id)
+			end
+			self.action.dx = self.state.pressed_pos.x - cursor_pos.x
+			self.action.dy = self.state.pressed_pos.y - cursor_pos.y
+			trigger_event(self, self.state.pressed_id, self.state.pressed_group, self.action, cursor.DRAG)
 		end
 	end
 

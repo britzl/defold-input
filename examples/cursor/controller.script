@@ -45,5 +45,7 @@ function on_message(self, message_id, message, sender)
 	elseif message_id == cursor.DRAG_END then
 		print("Drag ended", message.id, message.group, message.x, message.y)
 		label.set_text("info#events", "Drag ended")
+	elseif message_id == cursor.DRAG then
+		print("Drag", message.id, message.group, message.x, message.y, message.dx, message.dy)
 	end
 end
