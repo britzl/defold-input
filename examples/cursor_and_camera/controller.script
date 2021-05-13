@@ -14,15 +14,19 @@ function on_input(self, action_id, action)
 	action.x = world.x
 	action.y = world.y
 	msg.post("#cursor", "input", { action_id = action_id, action = action })
-	if action.pressed then
-		self.pressed_position = vmath.vector3(screen)
-		self.camera_position = go.get_position(CAMERA_ID)
-		camera.unfollow(CAMERA_ID)
-	elseif action.released then
-		self.pressed_position = nil
-	elseif self.pressed_position then
-		local diff = screen - self.pressed_position
-		go.set_position(self.camera_position - diff, CAMERA_ID)
+
+	-- handle camera drag - but only if cursor isn't over something
+	if not self.over then
+		if action.pressed then
+			self.pressed_position = vmath.vector3(screen)
+			self.camera_position = go.get_position(CAMERA_ID)
+			camera.unfollow(CAMERA_ID)
+		elseif action.released then
+			self.pressed_position = nil
+		elseif self.pressed_position then
+			local diff = screen - self.pressed_position
+			go.set_position(self.camera_position - diff, CAMERA_ID)
+		end
 	end
 end
 
@@ -30,9 +34,11 @@ function on_message(self, message_id, message, sender)
 	if message_id == cursor.OVER then
 		print("Cursor over", message.id, message.group, message.x, message.y)
 		label.set_text("info#events", "Cursor over")
+		self.over = message.id
 	elseif message_id == cursor.OUT then
 		print("Cursor out", message.id, message.group, message.x, message.y)
 		label.set_text("info#events", "Cursor out")
+		self.over = nil
 	elseif message_id == cursor.PRESSED then
 		print("Pressed", message.id, message.group, message.x, message.y)
 		label.set_text("info#events", "Pressed")
