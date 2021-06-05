@@ -1,15 +1,12 @@
 [project]
 title = Defold-Input
 version = 0.1
-dependencies = https://github.com/britzl/deftest/archive/2.6.0.zip,https://github.com/britzl/defold-orthographic/archive/2.10.0.zip
+dependencies#0 = https://github.com/britzl/deftest/archive/2.6.0.zip
+dependencies#1 = https://github.com/britzl/defold-orthographic/archive/2.10.0.zip
 
 [bootstrap]
 main_collection = /examples/examples.collectionc
 render = /orthographic/render/orthographic.renderc
-
-[input]
-game_binding = /in/bindings/all.input_bindingc
-gamepads = /in/gamepads/in.gamepadsc
 
 [display]
 width = 640
@@ -50,4 +47,7 @@ bundle_identifier = com.britzl.defold.input
 show_fullscreen_button = 0
 show_made_with_defold = 0
 cssfile = /builtins/manifests/web/dark_theme.css
+
+[input]
+game_binding = /builtins/input/all.input_bindingc
 
