@@ -5,6 +5,8 @@ local cursor = require "in.cursor"
 go.property("action_id", hash("touch"))
 go.property("drag", true)
 go.property("drag_threshold", 20)
+go.property("drag_lock_x", false)
+go.property("drag_lock_y", false)
 go.property("collisionobject_filter", hash(""))
 go.property("acquire_input_focus", false)
 go.property("notify_own_gameobject", true)
@@ -12,6 +14,10 @@ go.property("notify_own_gameobject", true)
 local COLLISION_RESPONSE = hash("collision_response")
 local INPUT = hash("input")
 local EMPTY_FILTER = hash("")
+
+local DRAG_MODE_HORIZONTAL = hash("DRAG_MODE_HORIZONTAL")
+local DRAG_MODE_VERTICAL = hash("DRAG_MODE_VERTICAL")
+local DRAG_MODE_FREE = hash("DRAG_MODE_FREE")
 
 local action_pos = vmath.vector3()
 local function handle_input(self, action_id, action)
@@ -209,10 +215,30 @@ function update(self, dt)
 	--
 	local cursor_pos = go.get_position()
 	if self.drag and self.state.pressed and not self.state.dragging then
-		local distance = vmath.length(cursor_pos - self.state.pressed_pos)
+		-- handle axis locked drag operations
+		local mode = DRAG_MODE_FREE
+		local diff = cursor_pos - self.state.pressed_pos
+		if self.drag_lock_x and not self.drag_lock_y then
+			diff.y = 0
+			mode = DRAG_MODE_HORIZONTAL
+		elseif self.drag_lock_y and not self.drag_lock_x then
+			diff.x = 0
+			mode = DRAG_MODE_VERTICAL
+		elseif self.drag_lock_x and self.drag_lock_y then
+			if math.abs(diff.x) > math.abs(diff.y) then
+				diff.y = 0
+				mode = DRAG_MODE_HORIZONTAL
+			else
+				diff.x = 0
+				mode = DRAG_MODE_VERTICAL
+			end
+		end
+		-- start drag?
+		local distance = vmath.length(diff)
 		if distance >= self.drag_threshold then
 			if trigger_event(self, self.state.pressed_id, self.state.pressed_group, self.action, cursor.DRAG_START) then
 				self.state.dragging = true
+				self.state_drag_mode = mode
 			end
 		end
 	end
@@ -228,6 +254,12 @@ function update(self, dt)
 			trigger_event(self, self.state.pressed_id, self.state.pressed_group, self.action, cursor.DRAG_END)
 			trigger_event(self, self.state.pressed_id, self.state.pressed_group, self.action, cursor.RELEASED)
 		else
+			-- restrict movement to a single axis
+			if self.state_drag_mode == DRAG_MODE_HORIZONTAL then
+				cursor_pos.y = self.state.pressed_pos.y
+			elseif self.state_drag_mode == DRAG_MODE_VERTICAL then
+				cursor_pos.x = self.state.pressed_pos.x
+			end
 			-- retain the offset between the cursor and the dragged object and use the z value from the dragged object
 			if self.state.pressed_id then
 				cursor_pos.x = cursor_pos.x - self.state.pressed_offset.x

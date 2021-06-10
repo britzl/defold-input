@@ -4,17 +4,21 @@ Use the cursor script to simplify user interaction such as clicking and dragging
 # Usage
 Attach the `cursor.script` to a game object that should act as a cursor. The game object must have either a kinematic or trigger collision object with a group and mask that matches other collision objects that should be able to interact with the cursor.
 
-IMPORTANT: You must make sure to configure the cursor.script `action_id` field (see below) to match the binding you have in your input bindings for the left mouse button/mouse button 1. The script assumes that the binding has action set to `touch`. 
+IMPORTANT: You must make sure to configure the cursor.script `action_id` field (see below) to match the binding you have in your input bindings for the left mouse button/mouse button 1. The script assumes that the binding has action set to `touch`.
 
 ## Script properties
 The script has the following [script properties](https://defold.com/manuals/script-properties/):
 
 * `action_id` - (hash) The action_id that corresponds to a press/click/interact action (default: "touch")
 * `drag` - (boolean) If the cursor should be able to drag game objects
+* `drag_lock_x` - (boolean) If a dragged game object should have movement locked to the horizontal axis
+* `drag_lock_y` - (boolean) If a dragged game object should have movement locked to the vertical axis
 * `drag_threshold` - (number) Distance the cursor has to move from a pressed object before it's considered dragged
 * `collisionobject_filter` - (hash) Id of a collision object component. If specified the cursor script will only accept collision messages from this id.
 * `acquire_input_focus` - (boolean) Check if the script should acquire input and handle input events itself
 * `notify_own_gameobject` - (boolean) Check if cursor messages should be sent not only to the interacting game object but also to the game object this script is attached to.
+
+NOTE: If both `drag_lock_x` and `drag_lock_y` are set the game object will be locked to the nearest axis when the drag operation was started.
 
 ## Input handling
 You can let the cursor react to input in several ways:
