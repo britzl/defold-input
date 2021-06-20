@@ -7,8 +7,10 @@ function init(self)
 	end
 
 	cursor.listen(msg.url("#cursor"), cursor.DRAG_START, function(message_id, message)
+		print("drag")
 		-- prevent dragging of blue aliens
 		if message.group == hash("blue") then
+			print("prevent")
 			return true
 		end
 	end)

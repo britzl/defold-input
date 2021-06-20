@@ -58,6 +58,23 @@ local function is_mobile()
 	return false
 end
 
+local function clear_drag_state(self)
+	self.state.dragging = false
+	self.state.dragging_cancelled = nil
+	self.state.dragging_mode = nil
+end
+
+local function clear_pressed_state(self)
+	self.state.pressed = nil
+	self.state.pressed_id = nil
+	self.state.pressed_group = nil
+end
+
+local function clear_over_state(self)
+	self.state.over_id = nil
+	self.state.over_group = nil
+end
+
 function init(self)
 	cursor.init()
 	if self.acquire_input_focus then
@@ -137,11 +154,8 @@ function update(self, dt)
 	-- in both cases we clear pressed and over state and generate an OUT event
 	if self.state.pressed and self.state.pressed_id and not self.collision_id and not self.state.dragging then
 		trigger_event(self, self.state.over_id, self.state.over_group, self.action, cursor.OUT)
-		self.state.pressed = false
-		self.state.pressed_id = nil
-		self.state.pressed_group = nil
-		self.state.over_id = nil
-		self.state.over_group = nil
+		clear_pressed_state(self)
+		clear_over_state(self)
 	end
 	
 	--
@@ -150,20 +164,17 @@ function update(self, dt)
 	if self.released then
 		if self.state.pressed then
 			if self.state.dragging then
-				self.state.dragging = false
+				clear_drag_state(self)
 				trigger_event(self, self.state.pressed_id, self.state.pressed_group, self.action, cursor.DRAG_END)
 			elseif self.state.pressed_id == self.state.over_id then
 				trigger_event(self, self.state.pressed_id, self.state.pressed_group, self.action, cursor.CLICKED)
 			end
 			trigger_event(self, self.state.pressed_id, self.state.pressed_group, self.action, cursor.RELEASED)
-			self.state.pressed = false
-			self.state.pressed_id = nil
-			self.state.pressed_group = nil
+			clear_pressed_state(self)
 			-- release on mobile/touch screen should also trigger a cursor_out event
 			if self.mobile and self.state.over_id then
 				trigger_event(self, self.state.over_id, self.state.over_group, self.action, cursor.OUT)
-				self.state.over_id = nil
-				self.state.over_group = nil
+				clear_over_state(self)
 			end
 		end
 	end
@@ -173,8 +184,7 @@ function update(self, dt)
 	--
 	if self.state.over_id and self.state.over_id ~= self.collision_id then
 		trigger_event(self, self.state.over_id, self.state.over_group, self.action, cursor.OUT)
-		self.state.over_id = nil
-		self.state.over_group = nil
+		clear_over_state(self)
 	end
 
 	--
@@ -214,7 +224,7 @@ function update(self, dt)
 	-- DRAG
 	--
 	local cursor_pos = go.get_position()
-	if self.drag and self.state.pressed and not self.state.dragging then
+	if self.drag and self.state.pressed and not self.state.dragging_cancelled and not self.state.dragging then
 		-- handle axis locked drag operations
 		local mode = DRAG_MODE_FREE
 		local diff = cursor_pos - self.state.pressed_pos
@@ -238,7 +248,9 @@ function update(self, dt)
 		if distance >= self.drag_threshold then
 			if trigger_event(self, self.state.pressed_id, self.state.pressed_group, self.action, cursor.DRAG_START) then
 				self.state.dragging = true
-				self.state_drag_mode = mode
+				self.state.drag_mode = mode
+			else
+				self.state.dragging_cancelled = true
 			end
 		end
 	end
@@ -246,18 +258,16 @@ function update(self, dt)
 	if self.state.dragging then
 		-- move the dragged object unless it has been deleted while being dragged
 		if self.state.pressed_id and not go_exists(self.state.pressed_id) then
-			self.state.dragging = false
-			self.state.pressed = nil
-			self.state.pressed_id = nil
-			self.state.pressed_group = nil
+			clear_drag_state(self)
+			clear_pressed_state(self)
 			self.state.over_id = nil
 			trigger_event(self, self.state.pressed_id, self.state.pressed_group, self.action, cursor.DRAG_END)
 			trigger_event(self, self.state.pressed_id, self.state.pressed_group, self.action, cursor.RELEASED)
 		else
 			-- restrict movement to a single axis
-			if self.state_drag_mode == DRAG_MODE_HORIZONTAL then
+			if self.state.drag_mode == DRAG_MODE_HORIZONTAL then
 				cursor_pos.y = self.state.pressed_pos.y
-			elseif self.state_drag_mode == DRAG_MODE_VERTICAL then
+			elseif self.state.drag_mode == DRAG_MODE_VERTICAL then
 				cursor_pos.x = self.state.pressed_pos.x
 			end
 			-- retain the offset between the cursor and the dragged object and use the z value from the dragged object
