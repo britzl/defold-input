@@ -156,6 +156,7 @@ function update(self, dt)
 		trigger_event(self, self.state.over_id, self.state.over_group, self.action, cursor.OUT)
 		clear_pressed_state(self)
 		clear_over_state(self)
+		clear_drag_state(self)
 	end
 	
 	--
