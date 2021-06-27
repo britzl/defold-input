@@ -154,9 +154,11 @@ function update(self, dt)
 	-- in both cases we clear pressed and over state and generate an OUT event
 	if self.state.pressed and self.state.pressed_id and not self.collision_id and not self.state.dragging then
 		trigger_event(self, self.state.over_id, self.state.over_group, self.action, cursor.OUT)
-		clear_pressed_state(self)
 		clear_over_state(self)
-		clear_drag_state(self)
+		if not go_exists(self.state.pressed_id) or self.state.dragging_cancelled then
+			clear_pressed_state(self)
+			clear_drag_state(self)
+		end
 	end
 	
 	--
