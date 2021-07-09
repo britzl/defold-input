@@ -169,6 +169,8 @@ function update(self, dt)
 			if self.state.dragging then
 				clear_drag_state(self)
 				trigger_event(self, self.state.pressed_id, self.state.pressed_group, self.action, cursor.DRAG_END)
+			elseif self.state.drag_cancelled then
+				clear_drag_state(self)
 			elseif self.state.pressed_id == self.state.over_id then
 				trigger_event(self, self.state.pressed_id, self.state.pressed_group, self.action, cursor.CLICKED)
 			end
