@@ -1,6 +1,9 @@
 # On-screen
 Use the On-screen module to create on-screen/virtual gamepad controls. The module handles buttons and analog sticks.
 
+# Multi-touch
+The On-screen module works with multi-touch input if it has been configured in your input bindings. Learn more in the [official Defold documentation](https://defold.com/manuals/input-mouse-and-touch/#touch-triggers).
+
 # Using onscreen.lua
 The `onscreen.lua` module can be used directly in any script dealing with user/player input:
 
