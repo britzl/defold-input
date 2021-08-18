@@ -2,6 +2,7 @@ function init(self)
 	msg.post("onscreen", "register")
 	msg.post("onscreen", "register_analog", { id = "analog", radius = 80 })
 	msg.post("onscreen", "register_button", { id = "button_a" })
+	msg.post("onscreen", "register_button", { id = "button_b" })
 	self.speed = vmath.vector3()
 end
 

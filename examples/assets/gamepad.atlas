@@ -1,11 +1,18 @@
 images {
   image: "/examples/assets/images/controls/shadedDark01.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/examples/assets/images/controls/shadedDark07.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 images {
   image: "/examples/assets/images/controls/shadedDark36.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
+}
+images {
+  image: "/examples/assets/images/controls/shadedDark37.png"
+  sprite_trim_mode: SPRITE_TRIM_MODE_OFF
 }
 margin: 0
 extrude_borders: 1
