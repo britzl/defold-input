@@ -62,6 +62,8 @@ local function clear_drag_state(self)
 	self.state.dragging = false
 	self.state.dragging_cancelled = nil
 	self.state.dragging_mode = nil
+	self.action.origin_x = 0
+	self.action.origin_y = 0
 end
 
 local function clear_pressed_state(self)
@@ -251,6 +253,8 @@ function update(self, dt)
 		-- start drag?
 		local distance = vmath.length(diff)
 		if distance >= self.drag_threshold then
+			self.action.origin_x = self.state.pressed_pos.x
+			self.action.origin_y = self.state.pressed_pos.y
 			if trigger_event(self, self.state.pressed_id, self.state.pressed_group, self.action, cursor.DRAG_START) then
 				self.state.dragging = true
 				self.state.drag_mode = mode
