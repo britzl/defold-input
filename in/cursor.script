@@ -5,6 +5,7 @@ local cursor = require "in.cursor"
 go.property("action_id", hash("touch"))
 go.property("drag", true)
 go.property("drag_threshold", 20)
+go.property("event_only_drag", false)
 go.property("drag_lock_x", false)
 go.property("drag_lock_y", false)
 go.property("collisionobject_filter", hash(""))
@@ -62,6 +63,8 @@ local function clear_drag_state(self)
 	self.state.dragging = false
 	self.state.dragging_cancelled = nil
 	self.state.dragging_mode = nil
+	self.action.origin_x = 0
+	self.action.origin_y = 0
 end
 
 local function clear_pressed_state(self)
@@ -251,6 +254,8 @@ function update(self, dt)
 		-- start drag?
 		local distance = vmath.length(diff)
 		if distance >= self.drag_threshold then
+			self.action.origin_x = self.state.pressed_pos.x
+			self.action.origin_y = self.state.pressed_pos.y
 			if trigger_event(self, self.state.pressed_id, self.state.pressed_group, self.action, cursor.DRAG_START) then
 				self.state.dragging = true
 				self.state.drag_mode = mode
@@ -269,21 +274,23 @@ function update(self, dt)
 			trigger_event(self, self.state.pressed_id, self.state.pressed_group, self.action, cursor.DRAG_END)
 			trigger_event(self, self.state.pressed_id, self.state.pressed_group, self.action, cursor.RELEASED)
 		else
-			-- restrict movement to a single axis
-			if self.state.drag_mode == DRAG_MODE_HORIZONTAL then
-				cursor_pos.y = self.state.pressed_pos.y
-			elseif self.state.drag_mode == DRAG_MODE_VERTICAL then
-				cursor_pos.x = self.state.pressed_pos.x
+			if not self.event_only_drag then
+				-- restrict movement to a single axis
+				if self.state.drag_mode == DRAG_MODE_HORIZONTAL then
+					cursor_pos.y = self.state.pressed_pos.y
+				elseif self.state.drag_mode == DRAG_MODE_VERTICAL then
+					cursor_pos.x = self.state.pressed_pos.x
+				end
+				-- retain the offset between the cursor and the dragged object and use the z value from the dragged object
+				if self.state.pressed_id then
+					cursor_pos.x = cursor_pos.x - self.state.pressed_offset.x
+					cursor_pos.y = cursor_pos.y - self.state.pressed_offset.y
+					cursor_pos.z = go.get_position(self.state.pressed_id).z
+					go.set_position(cursor_pos, self.state.pressed_id)
+				end
+				self.action.dx = self.state.pressed_pos.x - cursor_pos.x
+				self.action.dy = self.state.pressed_pos.y - cursor_pos.y
 			end
-			-- retain the offset between the cursor and the dragged object and use the z value from the dragged object
-			if self.state.pressed_id then
-				cursor_pos.x = cursor_pos.x - self.state.pressed_offset.x
-				cursor_pos.y = cursor_pos.y - self.state.pressed_offset.y
-				cursor_pos.z = go.get_position(self.state.pressed_id).z
-				go.set_position(cursor_pos, self.state.pressed_id)
-			end
-			self.action.dx = self.state.pressed_pos.x - cursor_pos.x
-			self.action.dy = self.state.pressed_pos.y - cursor_pos.y
 			trigger_event(self, self.state.pressed_id, self.state.pressed_group, self.action, cursor.DRAG)
 		end
 	end
