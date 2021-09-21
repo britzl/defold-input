@@ -9,6 +9,13 @@ M.DRAG_END = hash("drag_end")
 M.DRAG_START = hash("drag_start")
 M.CLICKED = hash("clicked")
 
+M.START_DRAGGING = hash("start_dragging")
+
+M.DRAG_MODE_HORIZONTAL = hash("drag_mode_horizontal")
+M.DRAG_MODE_VERTICAL = hash("drag_mode_vertical")
+M.DRAG_MODE_FREE = hash("drag_mode_free")
+
+
 local listeners = {}
 
 local EMPTY = hash("")
@@ -45,5 +52,5 @@ end
 function M.final()
 	listeners[url_to_key()] = nil
 end
-	
+
 return M

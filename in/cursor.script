@@ -15,10 +15,6 @@ local COLLISION_RESPONSE = hash("collision_response")
 local INPUT = hash("input")
 local EMPTY_FILTER = hash("")
 
-local DRAG_MODE_HORIZONTAL = hash("DRAG_MODE_HORIZONTAL")
-local DRAG_MODE_VERTICAL = hash("DRAG_MODE_VERTICAL")
-local DRAG_MODE_FREE = hash("DRAG_MODE_FREE")
-
 local action_pos = vmath.vector3()
 local function handle_input(self, action_id, action)
 	-- ignore accelerometer
@@ -89,7 +85,7 @@ function init(self)
 	self.released = false
 
 	self.action = {}
-	
+
 	self.state = {
 		pressed = false,
 		dragging = false,
@@ -135,6 +131,13 @@ local function trigger_event(self, game_object_id, game_object_group, action, me
 end
 
 
+local function start_dragging(self, id, mode)
+	self.state.dragging = true
+	self.state.pressed_id = id
+	self.state.drag_mode = mode
+end
+
+
 function update(self, dt)
 	-- skip one frame to give the collision data a chance to properly update
 	-- after a press or release
@@ -149,7 +152,7 @@ function update(self, dt)
 	-- EARLY RELEASE+OUT
 	-- if we are not dragging something and the thing we pressed is no longer under
 	-- the cursor it was either
-	-- 1. deleted by an OVER or PRESSED event 
+	-- 1. deleted by an OVER or PRESSED event
 	-- 2. not draggable and the cursor moved outside while pressed
 	-- in both cases we clear pressed and over state and generate an OUT event
 	if self.state.pressed and self.state.pressed_id and not self.collision_id and not self.state.dragging then
@@ -160,7 +163,7 @@ function update(self, dt)
 			clear_drag_state(self)
 		end
 	end
-	
+
 	--
 	-- RELEASE
 	--
@@ -231,29 +234,28 @@ function update(self, dt)
 	local cursor_pos = go.get_position()
 	if self.drag and self.state.pressed and not self.state.dragging_cancelled and not self.state.dragging then
 		-- handle axis locked drag operations
-		local mode = DRAG_MODE_FREE
+		local mode = cursor.DRAG_MODE_FREE
 		local diff = cursor_pos - self.state.pressed_pos
 		if self.drag_lock_x and not self.drag_lock_y then
 			diff.y = 0
-			mode = DRAG_MODE_HORIZONTAL
+			mode = cursor.DRAG_MODE_HORIZONTAL
 		elseif self.drag_lock_y and not self.drag_lock_x then
 			diff.x = 0
-			mode = DRAG_MODE_VERTICAL
+			mode = cursor.DRAG_MODE_VERTICAL
 		elseif self.drag_lock_x and self.drag_lock_y then
 			if math.abs(diff.x) > math.abs(diff.y) then
 				diff.y = 0
-				mode = DRAG_MODE_HORIZONTAL
+				mode = cursor.DRAG_MODE_HORIZONTAL
 			else
 				diff.x = 0
-				mode = DRAG_MODE_VERTICAL
+				mode = cursor.DRAG_MODE_VERTICAL
 			end
 		end
 		-- start drag?
 		local distance = vmath.length(diff)
 		if distance >= self.drag_threshold then
 			if trigger_event(self, self.state.pressed_id, self.state.pressed_group, self.action, cursor.DRAG_START) then
-				self.state.dragging = true
-				self.state.drag_mode = mode
+				start_dragging(self, self.state.pressed_id, mode)
 			else
 				self.state.dragging_cancelled = true
 			end
@@ -270,9 +272,9 @@ function update(self, dt)
 			trigger_event(self, self.state.pressed_id, self.state.pressed_group, self.action, cursor.RELEASED)
 		else
 			-- restrict movement to a single axis
-			if self.state.drag_mode == DRAG_MODE_HORIZONTAL then
+			if self.state.drag_mode == cursor.DRAG_MODE_HORIZONTAL then
 				cursor_pos.y = self.state.pressed_pos.y
-			elseif self.state.drag_mode == DRAG_MODE_VERTICAL then
+			elseif self.state.drag_mode == cursor.DRAG_MODE_VERTICAL then
 				cursor_pos.x = self.state.pressed_pos.x
 			end
 			-- retain the offset between the cursor and the dragged object and use the z value from the dragged object
@@ -307,6 +309,8 @@ function on_message(self, message_id, message, sender)
 				end
 			end
 		end
+	elseif message_id == cursor.START_DRAGGING then
+		start_dragging(self, message.id, message.mode or cursor.DRAG_MODE_FREE)
 	elseif message_id == INPUT then
 		handle_input(self, message.action_id, message.action)
 	end
