@@ -46,7 +46,7 @@ It is also possible to programmatically start a drag operation of a game object:
 
 ```
 -- start dragging the game object with id '/go' vertically
-msg.post("#cursor", cursor.START_DRAG, { id = hash("/go"), mode = cursor.DRAG_MODE_VERTICAL })
+msg.post("#cursor", cursor.START_DRAGGING, { id = hash("/go"), mode = cursor.DRAG_MODE_VERTICAL })
 ```
 
 ## Blocking input events
