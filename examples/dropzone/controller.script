@@ -1,0 +1,35 @@
+local cursor = require "in.cursor"
+
+function on_message(self, message_id, message, sender)
+	if message_id == cursor.OVER then
+		print("Cursor over", message.id, message.group, message.x, message.y)
+		-- track if above a dropzone
+		if message.group == hash("green_dropzone") then
+			self.over_green_dropzone = true
+		elseif message.group == hash("blue_dropzone") then
+			self.over_blue_dropzone = true
+		end
+	elseif message_id == cursor.OUT then
+		print("Cursor out", message.id, message.group, message.x, message.y)
+		-- track when moving outside a dropzone
+		if message.group == hash("green_dropzone") then
+			self.over_green_dropzone = false
+		elseif message.group == hash("blue_dropzone") then
+			self.over_blue_dropzone = false
+		end
+	elseif message_id == cursor.RELEASED then
+		print("Released", message.id, message.group, message.x, message.y)
+	elseif message_id == cursor.CLICKED then
+		print("Clicked", message.id, message.group, message.x, message.y)
+	elseif message_id == cursor.DRAG_START then
+		print("Drag started", message.id, message.group, message.x, message.y)
+	elseif message_id == cursor.DRAG_END then
+		print("Drag ended", message.id, message.group, message.x, message.y)
+		-- delete if drag of alien matches dropzone color
+		if message.group == hash("green") and self.over_green_dropzone then
+			go.delete(message.id)
+		elseif message.group == hash("blue") and self.over_blue_dropzone then
+			go.delete(message.id)
+		end
+	end
+end

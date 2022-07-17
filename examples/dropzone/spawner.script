@@ -1,0 +1,16 @@
+local WIDTH = tonumber(sys.get_config("display.width"))
+local HEIGHT = tonumber(sys.get_config("display.height"))
+
+local function random_pos()
+	return vmath.vector3(math.random(WIDTH), math.random(HEIGHT), math.random(-100, 100) / 100)
+end
+
+function init(self)
+	math.randomseed(socket.gettime())
+	for i=1,20 do
+		factory.create("#bluefactory", random_pos())
+	end
+	for i=1,20 do
+		factory.create("#greenfactory", random_pos())
+	end
+end
