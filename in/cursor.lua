@@ -8,6 +8,7 @@ M.DRAG = hash("drag")
 M.DRAG_END = hash("drag_end")
 M.DRAG_START = hash("drag_start")
 M.CLICKED = hash("clicked")
+M.RESET = hash("reset")
 
 M.START_DRAGGING = hash("start_dragging")
 
@@ -52,6 +53,11 @@ end
 
 function M.final()
 	listeners[url_to_key()] = nil
+end
+
+function M.reset(cursor_url)
+	cursor_url = cursor_url or msg.url()
+	msg.post(cursor_url, M.RESET)
 end
 
 return M

@@ -74,14 +74,7 @@ local function clear_over_state(self)
 	self.state.over_group = nil
 end
 
-function init(self)
-	cursor.init()
-	if self.acquire_input_focus then
-		msg.post(".", "acquire_input_focus")
-	end
-
-	self.mobile = is_mobile()
-
+local function reset_state(self)
 	self.collision_id = nil
 	self.collision_group = nil
 	self.pressed = false
@@ -94,6 +87,17 @@ function init(self)
 		dragging = false,
 		over_id = nil,
 	}
+end
+
+function init(self)
+	cursor.init()
+	if self.acquire_input_focus then
+		msg.post(".", "acquire_input_focus")
+	end
+
+	self.mobile = is_mobile()
+
+	reset_state(self)
 end
 
 function final(self)
@@ -318,6 +322,8 @@ function on_message(self, message_id, message, sender)
 		end
 	elseif message_id == cursor.START_DRAGGING then
 		start_dragging(self, message.id, message.mode or cursor.DRAG_MODE_FREE)
+	elseif message_id == cursor.RESET then
+		reset_state(self)
 	elseif message_id == INPUT then
 		handle_input(self, message.action_id, message.action)
 	end
