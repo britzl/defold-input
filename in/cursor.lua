@@ -41,12 +41,13 @@ function M.listen(cursor_url, message_id, fn)
 	assert(message_id, "You must provide a message id")
 	assert(fn, "You must provide a listener function")
 	local key = url_to_key(cursor_url)
-	assert(listeners[key], "You must provide a valid cursor script url")
+	listeners[key] = listeners[key] or {}
 	listeners[key][message_id] = fn
 end
 
 function M.init()
-	listeners[url_to_key()] = {}
+	local key = url_to_key()
+	listeners[key] = listeners[key] or {}
 end
 
 function M.final()
