@@ -17,6 +17,7 @@ dynamic_orientation = 1
 scale = 0.02
 debug = 0
 gravity_y = 0
+max_collision_object_count = 512
 
 [script]
 shared_state = 1
