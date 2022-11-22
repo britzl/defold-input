@@ -41,6 +41,8 @@ Using the gesture module directly gives you full control but requires a couple o
 				print(g.double_tap.position)
 			elseif g.long_press then
 				print(g.long_press.position, g.long_press.time)
+			elseif g.repeated then
+				print("Repeated")
 			elseif g.two_finger.tap then
 				print("Two finger tap!")
 			elseif g.two_finger.pinch then
