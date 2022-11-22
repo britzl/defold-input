@@ -96,6 +96,7 @@ function M.create(settings)
 		gestures.swipe_up = false
 		gestures.swipe_down = false
 		gestures.swipe = nil
+		gestures.repeated = false
 
 		gestures.two_finger.tap = false
 		gestures.two_finger.double_tap = false
@@ -105,6 +106,7 @@ function M.create(settings)
 		gestures.two_finger.swipe_up = false
 		gestures.two_finger.swipe_down = false
 		gestures.two_finger.pinch = nil
+		gestures.two_finger.repeated = false
 	end
 
 
@@ -114,6 +116,7 @@ function M.create(settings)
 		state.is_tap = false
 		state.is_long_press = false
 		state.is_swipe = false
+		state.is_repeated = false
 		state.swipe_left = false
 		state.swipe_right = false
 		state.swipe_up = false
@@ -177,6 +180,9 @@ function M.create(settings)
 			
 			state.released_time = socket.gettime()
 			state.pressed = false
+			
+		elseif touch.repeated then
+			state.is_repeated = true
 		end
 	end
 
@@ -196,6 +202,8 @@ function M.create(settings)
 			gestures.swipe_down = single_state.swipe_down
 			gestures.swipe_right = single_state.swipe_right
 			gestures.swipe_left = single_state.swipe_left
+		elseif single_state.is_repeated then
+			gestures.repeated = single_state.is_repeated
 		end
 	end
 
@@ -232,6 +240,8 @@ function M.create(settings)
 			gestures.two_finger.swipe_down = s1.swipe_down and s2.swipe_down
 			gestures.two_finger.swipe_right = s1.swipe_right and s2.swipe_right
 			gestures.two_finger.swipe_left = s1.swipe_left and s2.swipe_left
+		elseif s1.is_repeated and s1.is_repeated then
+			guestures.two_finger.repeated = true
 		else
 			local pressed1 = s1.pressed_position
 			local pressed2 = s2.pressed_position
@@ -276,12 +286,13 @@ local instances = {}
 --		* tap [table] Values: position
 --		* double_tap [table] Values: position
 --		* long_press [table] Values: position, time
+--		* repeated [boolean]
 --		* swipe_left [boolean]
 --		* swipe_right [boolean]
 --		* swipe_up [boolean]
 --		* swipe_down [boolean]
 --		* swipe [table] Values: from, to and time
---		* two_finger [table] Two-finger geatures (tap, double_tap, long_press, swipe_* and pinch)
+--		* two_finger [table] Two-finger geatures (tap, double_tap, long_press, repeated, swipe_* and pinch)
 function M.on_input(self, action_id, action)
 	if not instances[self] then
 		instances[self] = M.create(M.SETTINGS)
