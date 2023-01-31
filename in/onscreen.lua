@@ -39,7 +39,24 @@ function M.create(config)
 		}
 		return data
 	end
-	
+
+	local function enable_multitouch(touch_list)
+		if multitouch_enabled then
+			return
+		end
+		multitouch_enabled = true
+		-- Find the touch with `id == config.touch` to upgrade to multitouch, i.e.
+		-- replace its id with the first touch from the `touch_list` list.
+		for _,control in pairs(controls) do
+			if control.touch_index == config.touch then
+				for _, v in pairs(touch_list) do
+					control.touch_index = v.id
+					return
+				end
+			end
+		end
+	end
+
 	local function handle_button(control, node)
 		if control.pressed then
 			control.fn(M.BUTTON_PRESSED, node, create_data(control))
@@ -213,12 +230,12 @@ function M.create(config)
 	function instance.on_input(action_id, action)
 		assert(action, "You must provide an action table")
 		if action.touch then
-			multitouch_enabled = true
+			enable_multitouch(action.touch)
 			for i,tp in pairs(action.touch) do
 				handle_touch(tp, tp.id)
 			end
 		elseif action_id == config.touch and not multitouch_enabled then
-			handle_touch(action, 0)
+			handle_touch(action, config.touch)
 		end
 	end
 	
