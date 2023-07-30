@@ -22,7 +22,11 @@ local listeners = {}
 local EMPTY = hash("")
 
 local function url_to_key(url)
-	url = url or msg.url()
+	if type(url) == "string" then
+		url = msg.url(url)
+	else
+		url = url or msg.url()
+	end
 	return hash_to_hex(url.socket or EMPTY) .. hash_to_hex(url.path or EMPTY) ..hash_to_hex(url.fragment or EMPTY)
 end
 
