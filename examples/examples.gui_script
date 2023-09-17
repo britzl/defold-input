@@ -29,6 +29,7 @@ function init(self)
 		"tester", "accelerometer", "button",
 		"keyboard", "cursor_and_gesture",
 		"onscreen", "cursor_and_camera", "dropzone",
+		"textbox"
 	}
 
 	for _,example in ipairs(examples) do
