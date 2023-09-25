@@ -3,8 +3,8 @@ scale_along_z: 0
 embedded_instances {
   id: "go"
   data: "components {\n"
-  "  id: \"creadentials\"\n"
-  "  component: \"/examples/textbox/creadentials.gui\"\n"
+  "  id: \"credentials\"\n"
+  "  component: \"/examples/textbox/credentials.gui\"\n"
   "  position {\n"
   "    x: 0.0\n"
   "    y: 0.0\n"
