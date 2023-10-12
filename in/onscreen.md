@@ -5,7 +5,7 @@ Use the On-screen module to create on-screen/virtual gamepad controls. The modul
 The On-screen module works with multi-touch input if it has been configured in your input bindings. Learn more in the [official Defold documentation](https://defold.com/manuals/input-mouse-and-touch/#touch-triggers).
 
 # Using onscreen.lua
-In your .gui file's Properties, point the Script property to the [GUI script](https://defold.com/manuals/gui-script/) `onscreen.gui_script` that comes shipped with this library, and register and listen for the buttons with messages. See [player.script](https://github.com/britzl/defold-input/blob/master/examples/onscreen/player.script) for a complete implementation example.
+In your .gui file's Properties, point the Script property to the [GUI script](https://defold.com/manuals/gui-script/) `onscreen.gui_script` that comes shipped with this library, and register and listen for the buttons with messages. See [player.script](https://github.com/britzl/defold-input/blob/master/examples/onscreen_go/player.script) for a complete implementation example.
 
 ---
 
@@ -55,3 +55,5 @@ end
 - Then attach this new GUI script to your GUI.
 
 - Inside your GUI, add two UI nodes with id "analog" and "button_a".
+
+- See [controls.gui_script](https://github.com/britzl/defold-input/blob/master/examples/onscreen_gui/controls.gui_script) for a complete implementation example.
