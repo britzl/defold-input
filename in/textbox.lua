@@ -106,7 +106,7 @@ function M.unregister(node_or_string)
 	end
 end
 
-local function zoom(node, scale)
+function M.effect(node, scale)
 	gui.cancel_animation(node, "scale.x")
 	gui.cancel_animation(node, "scale.y")
 	gui.animate(node, "scale.x", scale.x, gui.EASING_OUTCUBIC, 1)
@@ -177,7 +177,7 @@ function M.on_input(action_id, action)
 				return true
 			else
 				if selected_textbox then
-					zoom(selected_textbox.box_node, selected_textbox.scale)
+					M.effect(selected_textbox.box_node, selected_textbox.scale)
 				end
 				selected_textbox = nil
 			end
@@ -192,13 +192,13 @@ function M.on_input(action_id, action)
 			end
 			if pressed then
 				if selected_textbox and selected_textbox ~= registered_node then
-					zoom(selected_textbox.box_node, selected_textbox.scale)
+					M.effect(selected_textbox.box_node, selected_textbox.scale)
 				end
 				selected_textbox = registered_node
 				if not registered_node.text then
 					registered_node.text = ""
 				end
-				zoom(registered_node.box_node, registered_node.scale * 1.1)
+				M.effect(registered_node.box_node, registered_node.scale * 1.1)
 			end
 			return pressed
 		end

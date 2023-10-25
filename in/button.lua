@@ -107,7 +107,7 @@ function M.dump()
 	end
 end
 
-local function shake(node, initial_scale)
+function M.effect(node, initial_scale)
 	gui.cancel_animation(node, "scale.x")
 	gui.cancel_animation(node, "scale.y")
 	gui.set_scale(node, initial_scale)
@@ -165,7 +165,7 @@ function M.on_input(action_id, action)
 				end
 			end
 			if pressed then
-				shake(registered_node.node, registered_node.scale)
+				M.effect(registered_node.node, registered_node.scale)
 				registered_node.callback()
 			end
 			return pressed
