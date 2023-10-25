@@ -233,18 +233,20 @@ function M.create(config)
 	-- @param action
 	function instance.on_input(action_id, action)
 		assert(action, "You must provide an action table")
+		local handled = false
 		if action.touch then
 			enable_multitouch(action.touch)
 			for i,tp in pairs(action.touch) do
-				local handled = handle_touch(tp, tp.id)
-				if handled then
-					return true
+				if handle_touch(tp, tp.id) then
+					handled = true
 				end
 			end
 		elseif action_id == config.touch and not multitouch_enabled then
-			return handle_touch(action, config.touch)
+			if handle_touch(action, config.touch) then
+				handled = true
+			end
 		end
-		return false
+		return handled
 	end
 	
 	return instance
