@@ -31,8 +31,8 @@ function M.create(config)
 
 	local function create_data(control)
 		local data = {
-			x = control.x or 0,
-			y = control.y or 0,
+			x = control.x or control.touch_position.x or 0,
+			y = control.y or control.touch_position.y or 0,
 			id = control.id,
 			pressed = control.pressed,
 			released = control.released,
