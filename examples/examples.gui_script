@@ -28,7 +28,9 @@ function init(self)
 		"gesture", "mapper", "cursor",
 		"tester", "accelerometer", "button",
 		"keyboard", "cursor_and_gesture",
-		"onscreen_go", "onscreen_gui", "cursor_and_camera", "dropzone",
+		"onscreen_go", "onscreen_gui",
+		"cursor_and_camera", "dropzone",
+		"textbox",
 	}
 
 	for _,example in ipairs(examples) do
