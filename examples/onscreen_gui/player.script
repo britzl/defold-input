@@ -1,0 +1,32 @@
+function init(self)
+	self.speed = vmath.vector3()
+end
+
+function update(self, dt)
+	go.set_position(go.get_position() + self.speed * dt)
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("laser") then
+		if message.released then
+			print("laser")
+			local pos = go.get_position() + vmath.vector3(0, 50, 0)
+			local id = factory.create("#laserfactory", pos)
+			go.animate(id, "position.y", go.PLAYBACK_ONCE_FORWARD, pos.y + 1500, go.EASING_LINEAR, 0.8, 0, function()
+				go.delete(id)
+			end)
+		end
+	elseif message_id == hash("bomb") then
+		if message.released then
+			print("smartbomb")
+		end
+	elseif message_id == hash("move") then
+		if message.released then
+			self.speed.x = 0
+			self.speed.y = 0
+		else
+			self.speed.x = message.x * 200
+			self.speed.y = message.y * 200
+		end
+	end
+end

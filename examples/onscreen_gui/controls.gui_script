@@ -1,0 +1,28 @@
+local onscreen = require "in.onscreen"
+
+
+function init(self)
+	msg.post(".", "acquire_input_focus")
+
+	self.analog = gui.get_node("analog")
+	self.button_a = gui.get_node("button_a")
+	self.button_b = gui.get_node("button_b")
+
+	onscreen.register_analog(self.analog, { radius = 80 }, function(action, node, touch)
+		msg.post("player", "move", touch)
+	end)
+	onscreen.register_button(self.button_a, nil, function(action, node, touch)
+		msg.post("player", "laser", touch)
+	end)
+	onscreen.register_button(self.button_b, nil, function(action, node, touch)
+		msg.post("player", "bomb", touch)
+	end)
+end
+
+function final(self)
+	onscreen.reset()
+end
+
+function on_input(self, action_id, action)
+	onscreen.on_input(action_id, action)
+end

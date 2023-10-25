@@ -201,6 +201,7 @@ function M.create(config)
 				control.released = false
 				control.touch_index = touch_index
 				control.handler(control, node)
+				return true
 			end
 		elseif touch.released then
 			local control, node = find_control_for_touch_index(touch_index)
@@ -211,6 +212,7 @@ function M.create(config)
 				control.released = true
 				control.touch_index = nil
 				control.handler(control, node)
+				return true
 			end
 		else
 			local control, node = find_control_for_touch_index(touch_index)
@@ -220,8 +222,10 @@ function M.create(config)
 				control.pressed = false
 				control.released = false
 				control.handler(control, node)
+				return true
 			end
 		end
+		return false
 	end
 
 	-- Forward any input here
@@ -232,11 +236,15 @@ function M.create(config)
 		if action.touch then
 			enable_multitouch(action.touch)
 			for i,tp in pairs(action.touch) do
-				handle_touch(tp, tp.id)
+				local handled = handle_touch(tp, tp.id)
+				if handled then
+					return true
+				end
 			end
 		elseif action_id == config.touch and not multitouch_enabled then
-			handle_touch(action, config.touch)
+			return handle_touch(action, config.touch)
 		end
+		return false
 	end
 	
 	return instance

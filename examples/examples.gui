@@ -1447,7 +1447,7 @@ nodes {
     w: 1.0
   }
   type: TYPE_TEMPLATE
-  id: "onscreen"
+  id: "onscreen_go"
   parent: "buttons"
   layer: ""
   inherit_alpha: true
@@ -1491,12 +1491,12 @@ nodes {
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
   texture: "examples/blue_button07"
-  id: "onscreen/button"
+  id: "onscreen_go/button"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
   adjust_mode: ADJUST_MODE_FIT
-  parent: "onscreen"
+  parent: "onscreen_go"
   layer: "below"
   inherit_alpha: true
   slice9 {
@@ -1549,9 +1549,9 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "ONSCREEN"
+  text: "ONSCREEN GO"
   font: "kenpixel15"
-  id: "onscreen/label"
+  id: "onscreen_go/label"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
@@ -1569,7 +1569,7 @@ nodes {
   }
   adjust_mode: ADJUST_MODE_FIT
   line_break: false
-  parent: "onscreen/button"
+  parent: "onscreen_go/button"
   layer: "text"
   inherit_alpha: true
   alpha: 1.0
@@ -1954,7 +1954,7 @@ nodes {
     w: 1.0
   }
   type: TYPE_TEMPLATE
-  id: "textbox"
+  id: "onscreen_gui"
   parent: "buttons"
   layer: ""
   inherit_alpha: true
@@ -1998,12 +1998,12 @@ nodes {
   type: TYPE_BOX
   blend_mode: BLEND_MODE_ALPHA
   texture: "examples/blue_button07"
-  id: "textbox/button"
+  id: "onscreen_gui/button"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
   adjust_mode: ADJUST_MODE_FIT
-  parent: "textbox"
+  parent: "onscreen_gui"
   layer: "below"
   inherit_alpha: true
   slice9 {
@@ -2056,9 +2056,9 @@ nodes {
   }
   type: TYPE_TEXT
   blend_mode: BLEND_MODE_ALPHA
-  text: "TEXTBOX"
+  text: "ONSCREEN GUI"
   font: "kenpixel15"
-  id: "textbox/label"
+  id: "onscreen_gui/label"
   xanchor: XANCHOR_NONE
   yanchor: YANCHOR_NONE
   pivot: PIVOT_CENTER
@@ -2076,7 +2076,7 @@ nodes {
   }
   adjust_mode: ADJUST_MODE_FIT
   line_break: false
-  parent: "textbox/button"
+  parent: "onscreen_gui/button"
   layer: "text"
   inherit_alpha: true
   alpha: 1.0
