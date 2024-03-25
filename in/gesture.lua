@@ -77,12 +77,6 @@ function M.create(settings)
 		two_finger = {},
 	}
 
-	-- the state of a single touch
-	local single_state = create_touch_state()
-	
-	-- the state of individual multi touch points
-	local multi_states = {}
-
 	local pinch = {
 		center = vmath.vector3(),
 	}
@@ -187,6 +181,8 @@ function M.create(settings)
 	end
 
 
+	-- the state of a single touch
+	local single_state = create_touch_state()
 	local function handle_single_touch(action)
 		clear_gesture_state()
 		handle_touch(action, single_state)
@@ -207,23 +203,11 @@ function M.create(settings)
 		end
 	end
 
-
-	local function handle_multi_touch(action)
-		assert(action.touch and #action.touch == 2)
+	-- the state of individual multi touch points
+	local multi_states = {}
+	local current_touch_count = 0
+	local function handle_multi_touch(t1, t2)
 		clear_gesture_state()
-		local t1 = action.touch[1]
-		local t2 = action.touch[2]
-
-		-- there seems to be an issue with multi touch where the first press
-		-- doesn't get registered
-		if not multi_states[t1.id] then
-			multi_states[t1.id] = create_touch_state()
-			t1.pressed = true
-		end
-		if not multi_states[t2.id] then
-			multi_states[t2.id] = create_touch_state()
-			t2.pressed = true
-		end
 		local s1 = multi_states[t1.id]
 		local s2 = multi_states[t2.id]
 		handle_touch(t1, s1)
@@ -261,8 +245,19 @@ function M.create(settings)
 
 	function instance.on_input(action_id, action)
 		if action.touch then
-			if settings.multi_touch and #action.touch == 2 then
-				handle_multi_touch(action)
+			if settings.multi_touch then
+				if #action.touch == 2 then
+					local t1 = action.touch[1]
+					local t2 = action.touch[2]
+					if current_touch_count < 2 then
+						multi_states[t1.id] = create_touch_state()
+						multi_states[t2.id] = create_touch_state()
+						t1.pressed = true
+						t2.pressed = true
+					end
+					handle_multi_touch(t1, t2)
+				end
+				current_touch_count = #action.touch
 				return gestures
 			end
 		elseif action_id == settings.action_id then
