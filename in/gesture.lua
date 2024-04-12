@@ -225,7 +225,7 @@ function M.create(settings)
 			gestures.two_finger.swipe_right = s1.swipe_right and s2.swipe_right
 			gestures.two_finger.swipe_left = s1.swipe_left and s2.swipe_left
 		elseif s1.is_repeated and s1.is_repeated then
-			guestures.two_finger.repeated = true
+			gestures.two_finger.repeated = true
 		else
 			local pressed1 = s1.pressed_position
 			local pressed2 = s2.pressed_position
