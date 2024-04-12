@@ -184,7 +184,6 @@ function M.create(settings)
 	-- the state of a single touch
 	local single_state = create_touch_state()
 	local function handle_single_touch(action)
-		clear_gesture_state()
 		handle_touch(action, single_state)
 		if single_state.is_double_tap then
 			gestures.double_tap = single_state.double_tap
@@ -207,7 +206,6 @@ function M.create(settings)
 	local multi_states = {}
 	local current_touch_count = 0
 	local function handle_multi_touch(t1, t2)
-		clear_gesture_state()
 		local s1 = multi_states[t1.id]
 		local s2 = multi_states[t2.id]
 		handle_touch(t1, s1)
@@ -246,6 +244,7 @@ function M.create(settings)
 	function instance.on_input(action_id, action)
 		if action.touch then
 			if settings.multi_touch then
+				clear_gesture_state()
 				if #action.touch == 2 then
 					local t1 = action.touch[1]
 					local t2 = action.touch[2]
@@ -261,6 +260,7 @@ function M.create(settings)
 				return gestures
 			end
 		elseif action_id == settings.action_id then
+			clear_gesture_state()
 			handle_single_touch(action)
 			return gestures
 		end
