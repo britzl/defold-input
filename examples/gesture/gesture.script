@@ -1,7 +1,29 @@
 local prettify = require "examples.prettify"
 
+local FMT = "repeated: %s\n"
+FMT = FMT .. "swipe_left: %s\n"
+FMT = FMT .. "swipe_right: %s\n"
+FMT = FMT .. "swipe_up: %s\n"
+FMT = FMT .. "swipe_down: %s\n"
+FMT = FMT .. "tap: %s\n"
+FMT = FMT .. "double_tap: %s\n"
+FMT = FMT .. "long_press: %s\n"
+FMT = FMT .. "two_finger: %s\n"
+
 function on_message(self, message_id, message, sender)
 	if message_id == hash("on_gesture") then
-		label.set_text("#label", prettify(message))
+		local s = FMT:format(
+			tostring(message.repeated),
+			tostring(message.swipe_left),
+			tostring(message.swipe_right),
+			tostring(message.swipe_up),
+			tostring(message.swipe_down),
+			prettify({message.tap or {}}, "  "),
+			prettify({message.double_tap or {}}, "  "),
+			prettify({message.long_press or {}}, "  "),
+			prettify({message.two_finger or {}}, "  ")
+		)
+		label.set_text("#label", s)
+		--label.set_text("#label", prettify(message))
 	end
 end

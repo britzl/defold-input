@@ -18,6 +18,9 @@ M.SETTINGS = {
 	--- maximum time between a pressed and release action to consider it a swipe
 	swipe_time = 0.5,
 
+	--- detect swipe only on release. set to false to report swipe also before release
+	swipe_on_release = true,
+
 	--- minimum time of a pressed/release sequence to consider it a long press
 	long_press_time = 0.5,
 
@@ -53,6 +56,92 @@ local function create_touch_state()
 	return state
 end
 
+local function check_swipe(touch, state, settings)
+	local dx = state.pressed_position and (state.pressed_position.x - touch.x) or 0
+	local dy = state.pressed_position and (state.pressed_position.y - touch.y) or 0
+	local ax = math.abs(dx)
+	local ay = math.abs(dy)
+	local distance = math.max(ax, ay)
+	local time = socket.gettime()
+	local time_since_pressed = time - (state.pressed_time or 0)
+	local is_swipe = distance >= settings.swipe_threshold and time_since_pressed <= settings.swipe_time
+	if is_swipe then
+		state.is_swipe = true
+		state.was_double_tap = false
+		local vertical = ay > ax
+		if vertical and dy < 0 then
+			state.swipe_up = true
+		elseif vertical and dy > 0 then
+			state.swipe_down = true
+		elseif not vertical and dx < 0 then
+			state.swipe_right = true
+		elseif not vertical and dx > 0 then
+			state.swipe_left = true
+		end
+		state.potential_double_tap = false
+		state.swipe.from.x = state.pressed_position.x
+		state.swipe.from.y = state.pressed_position.y
+		state.swipe.to.x = touch.x
+		state.swipe.to.y = touch.y
+		state.swipe.time = time_since_pressed
+	end
+	return is_swipe
+end
+
+local function check_tap(touch, state, settings)
+	local dx = state.pressed_position and (state.pressed_position.x - touch.x) or 0
+	local dy = state.pressed_position and (state.pressed_position.y - touch.y) or 0
+	local ax = math.abs(dx)
+	local ay = math.abs(dy)
+	local distance = math.max(ax, ay)
+	local time = socket.gettime()
+	local time_since_pressed = time - (state.pressed_time or 0)
+	local is_tap = distance < settings.tap_threshold
+	if is_tap then
+		local time_since_last_released = time - (state.released_time or 0)
+		if state.potential_double_tap
+		and time_since_last_released < settings.double_tap_interval then
+			state.is_double_tap = true
+			state.was_double_tap = true
+			state.double_tap.position.x = touch.x
+			state.double_tap.position.y = touch.y
+		end
+		if time_since_pressed < settings.long_press_time then
+			-- a third tap in short succession should not be considered a potential double tap
+			state.potential_double_tap = not state.was_double_tap
+			state.is_tap = true
+			state.was_double_tap = false
+			state.tap.position.x = touch.x
+			state.tap.position.y = touch.y
+		else
+			state.potential_double_tap = false
+			state.is_long_press = true
+			state.was_double_tap = false
+			state.long_press.position.x = touch.x
+			state.long_press.position.y = touch.y
+			state.long_press.time = time_since_pressed
+		end
+	end
+	return is_tap
+end
+
+local function handle_released(touch, state, settings)
+	check_tap(touch, state, settings)
+	check_swipe(touch, state, settings)
+	state.released_time = socket.gettime()
+	state.pressed = false
+end
+
+local function handle_pressed(touch, state, settings)
+	state.pressed = true
+	state.pressed_position = vmath.vector3(touch.x, touch.y, 0)
+	state.pressed_time = socket.gettime()
+end
+
+local function handle_repeated(touch, state, settings)
+	state.is_repeated = true
+end
+
 
 --- Create a gesture instance. Use this if you need multiple gesture detectors that each needs
 -- unique settings
@@ -66,6 +155,9 @@ function M.create(settings)
 	settings.swipe_threshold = settings.swipe_threshold or M.SETTINGS.swipe_threshold
 	settings.swipe_time = settings.swipe_time or M.SETTINGS.swipe_time
 	settings.long_press_time = settings.long_press_time or M.SETTINGS.long_press_time
+	if settings.swipe_on_release == nil then
+		settings.swipe_on_release = M.SETTINGS.wipe_on_release
+	end
 	if settings.multi_touch == nil then
 		settings.multi_touch = M.SETTINGS.multi_touch
 	end
@@ -104,6 +196,7 @@ function M.create(settings)
 	end
 
 
+
 	-- handle the state of a touch (either single or one from a multi touch)
 	local function handle_touch(touch, state)
 		state.is_double_tap = false
@@ -117,69 +210,18 @@ function M.create(settings)
 		state.swipe_down = false
 				
 		if touch.pressed then
-			state.pressed = true
-			state.pressed_position = vmath.vector3(touch.x, touch.y, 0)
-			state.pressed_time = socket.gettime()
+			handle_pressed(touch, state, settings)
 		elseif touch.released then
-			local dx = state.pressed_position and (state.pressed_position.x - touch.x) or 0
-			local dy = state.pressed_position and (state.pressed_position.y - touch.y) or 0
-			local ax = math.abs(dx)
-			local ay = math.abs(dy)
-			local distance = math.max(ax, ay)
-			local time = socket.gettime() - (state.pressed_time or 0)
-			local is_tap = distance < settings.tap_threshold
-			local is_swipe = distance >= settings.swipe_threshold and time <= settings.swipe_time
-			if is_tap then
-				if state.potential_double_tap and socket.gettime() - (state.released_time or 0) < settings.double_tap_interval then
-					state.is_double_tap = true
-					state.was_double_tap = true
-					state.double_tap.position.x = touch.x
-					state.double_tap.position.y = touch.y
-				end
-				if time < settings.long_press_time then
-					-- a third tap in short succession should not be considered a potential double tap
-					state.potential_double_tap = not state.was_double_tap
-					state.is_tap = true
-					state.was_double_tap = false
-					state.tap.position.x = touch.x
-					state.tap.position.y = touch.y
-				else
-					state.potential_double_tap = false
-					state.is_long_press = true
-					state.was_double_tap = false
-					state.long_press.position.x = touch.x
-					state.long_press.position.y = touch.y
-					state.long_press.time = time
-				end
-			elseif is_swipe then
-				state.is_swipe = true
-				state.was_double_tap = false
-				local vertical = ay > ax
-				if vertical and dy < 0 then
-					state.swipe_up = true
-				elseif vertical and dy > 0 then
-					state.swipe_down = true
-				elseif not vertical and dx < 0 then
-					state.swipe_right = true
-				elseif not vertical and dx > 0 then
-					state.swipe_left = true
-				end
-				state.potential_double_tap = false
-				state.swipe.from.x = state.pressed_position.x
-				state.swipe.from.y = state.pressed_position.y
-				state.swipe.to.x = touch.x
-				state.swipe.to.y = touch.y
-				state.swipe.time = time
+			handle_released(touch, state, settings)
+		else
+			if not settings.swipe_on_release then
+				check_swipe(touch, state, settings)
 			end
-			
-			state.released_time = socket.gettime()
-			state.pressed = false
-			
-		elseif touch.repeated then
-			state.is_repeated = true
+			if touch.repeated then
+				handle_repeated(touch, state, settings)
+			end
 		end
 	end
-
 
 	-- the state of a single touch
 	local single_state = create_touch_state()
