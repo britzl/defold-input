@@ -5,6 +5,7 @@ FMT = FMT .. "swipe_left: %s\n"
 FMT = FMT .. "swipe_right: %s\n"
 FMT = FMT .. "swipe_up: %s\n"
 FMT = FMT .. "swipe_down: %s\n"
+FMT = FMT .. "swipe_released: %s\n"
 FMT = FMT .. "tap: %s\n"
 FMT = FMT .. "double_tap: %s\n"
 FMT = FMT .. "long_press: %s\n"
@@ -18,6 +19,7 @@ function on_message(self, message_id, message, sender)
 			tostring(message.swipe_right),
 			tostring(message.swipe_up),
 			tostring(message.swipe_down),
+			tostring(message.swipe_released == true),
 			prettify({message.tap or {}}, "  "),
 			prettify({message.double_tap or {}}, "  "),
 			prettify({message.long_press or {}}, "  "),

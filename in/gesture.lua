@@ -18,9 +18,6 @@ M.SETTINGS = {
 	--- maximum time between a pressed and release action to consider it a swipe
 	swipe_time = 0.5,
 
-	--- detect swipe only on release. set to false to report swipe also before release
-	swipe_on_release = true,
-
 	--- minimum time of a pressed/release sequence to consider it a long press
 	long_press_time = 0.5,
 
@@ -155,9 +152,6 @@ function M.create(settings)
 	settings.swipe_threshold = settings.swipe_threshold or M.SETTINGS.swipe_threshold
 	settings.swipe_time = settings.swipe_time or M.SETTINGS.swipe_time
 	settings.long_press_time = settings.long_press_time or M.SETTINGS.long_press_time
-	if settings.swipe_on_release == nil then
-		settings.swipe_on_release = M.SETTINGS.wipe_on_release
-	end
 	if settings.multi_touch == nil then
 		settings.multi_touch = M.SETTINGS.multi_touch
 	end
@@ -208,15 +202,14 @@ function M.create(settings)
 		state.swipe_right = false
 		state.swipe_up = false
 		state.swipe_down = false
+		state.swipe_released = false
 				
 		if touch.pressed then
 			handle_pressed(touch, state, settings)
 		elseif touch.released then
 			handle_released(touch, state, settings)
 		else
-			if not settings.swipe_on_release then
-				check_swipe(touch, state, settings)
-			end
+			check_swipe(touch, state, settings)
 			if touch.repeated then
 				handle_repeated(touch, state, settings)
 			end
@@ -235,6 +228,7 @@ function M.create(settings)
 		elseif single_state.is_long_press then
 			gestures.long_press = single_state.long_press
 		elseif single_state.is_swipe then
+			gestures.swipe_released = not single_state.pressed
 			gestures.swipe = single_state.swipe
 			gestures.swipe_up = single_state.swipe_up
 			gestures.swipe_down = single_state.swipe_down
@@ -262,6 +256,7 @@ function M.create(settings)
 		elseif s1.is_long_press and s2.is_long_press then
 			gestures.two_finger.long_press = true
 		elseif s1.is_swipe and s2.is_swipe then
+			gestures.two_finger_swipe_released = not s1.pressed and not s2.pressed
 			gestures.two_finger.swipe_up = s1.swipe_up and s2.swipe_up
 			gestures.two_finger.swipe_down = s1.swipe_down and s2.swipe_down
 			gestures.two_finger.swipe_right = s1.swipe_right and s2.swipe_right
