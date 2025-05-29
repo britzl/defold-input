@@ -64,12 +64,14 @@ Example:
 ```
 local cursor = require "in.cursor"
 
-cursor.listen("#cursor", cursor.DRAG_START, function(message_id, message)
-	-- prevent dragging of blue aliens
-	if message.group == hash("blue") then
-		return true -- return true to block the event
-	end
-end)
+function init(self)
+	cursor.listen("#cursor", cursor.DRAG_START, function(message_id, message)
+		-- prevent dragging of blue aliens
+		if message.group == hash("blue") then
+			return true -- return true to block the event
+		end
+	end)
+end
 ```
 
 ## Resetting cursor state
@@ -78,9 +80,16 @@ It is recommended to reset the cursor state when the screen is minimized and/or 
 ```
 local cursor = require "in.cursor"
 
-msg.post("#cursor", cursor.RESET)
+function init(self)
+	window.set_listener(function(self, event, data)
+		if event == window.WINDOW_EVENT_FOCUS_LOST then
 
--- or
+			msg.post("#cursor", cursor.RESET)
 
-cursor.reset("#cursor")
+			-- or
+
+			cursor.reset("#cursor")
+		end
+	end)
+end
 ```
