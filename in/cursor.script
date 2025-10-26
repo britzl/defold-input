@@ -22,6 +22,7 @@ local function handle_input(self, action_id, action)
 	if not action_id and action.acc_x then
 		return
 	end
+    if not action.x or not action.y then return end
 	action_pos.x = action.x
 	action_pos.y = action.y
 	self.action = action
