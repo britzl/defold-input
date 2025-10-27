@@ -227,7 +227,7 @@ function update(self, dt)
 				self.state.pressed_id = self.state.over_id
 				self.state.pressed_group = self.state.over_group
 				self.state.pressed_pos = go.get_position()
-				if self.state.over_id then
+				if self.state.over_id and go.exists(self.state.over_id) then
 					self.state.pressed_offset = self.state.pressed_pos - go.get_position(self.state.over_id)
 				else
 					self.state.pressed_offset = vmath.vector3()
