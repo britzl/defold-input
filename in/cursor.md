@@ -93,3 +93,39 @@ function init(self)
 	end)
 end
 ```
+
+## Combine with physics.set_event_listener()
+
+The cursor will not work if `physics.set_event_listener()` is used since message will no longer be sent to colliding objects. A solution is to forward relevant events as messages to the cursor script. Example:
+
+```lua
+local CURSOR = hash("cursor")
+local COLLISION_EVENT = hash("collision_event")
+local COLLISION_RESPONSE = hash("collision_repsonse")
+
+local function physics_world_listener(self, events)
+	for _,event in ipairs(events) do
+		if event.type == COLLISION_EVENT then
+			local a_is_cursor = event.a.id == CURSOR
+			local b_is_cursor = event.b.id == CURSOR
+			if a_is_cursor or b_is_cursor then
+				local cursor_id = a_is_cursor and event.a.id or event.b.id
+				local other_id = a_is_cursor and event.b.id or event.a.id
+				local cursor_group = a_is_cursor and event.a.group or event.b.group
+				local other_group = a_is_cursor and event.b.group or event.a.group
+				local message = {
+					id = cursor_id,
+					other_id = other_id,
+					group = cursor_group,
+					other_group = other_group
+				}
+				msg.post(cursor_id, COLLISION_RESPONSE, message)
+			end
+		end
+	end
+end
+
+function init(self)
+	physics.set_event_listener(physics_world_listener)
+end
+```
