@@ -3,8 +3,8 @@ local acc = require "in.accelerometer"
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
-	self.width = tonumber(sys.get_config("display.width", 0))
-	self.height = tonumber(sys.get_config("display.height", 0))
+	self.width = sys.get_config_number("display.width", 0)
+	self.height = sys.get_config_number("display.height", 0)
 	window.set_listener(function(self, event, data)
 		if event == window.WINDOW_EVENT_RESIZED then
 			acc.on_window_resized(data.width, data.height)
