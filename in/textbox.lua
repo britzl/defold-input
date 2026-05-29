@@ -107,8 +107,8 @@ function M.unregister(node_or_string)
 end
 
 function M.effect(node, scale)
-	gui.cancel_animation(node, "scale.x")
-	gui.cancel_animation(node, "scale.y")
+	gui.cancel_animations(node, "scale.x")
+	gui.cancel_animations(node, "scale.y")
 	gui.animate(node, "scale.x", scale.x, gui.EASING_OUTCUBIC, 1)
 	gui.animate(node, "scale.y", scale.y, gui.EASING_OUTCUBIC, 1)
 end

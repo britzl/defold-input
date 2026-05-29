@@ -1,6 +1,6 @@
 local M = {}
 
-local landscape = tonumber(sys.get_config("display.width", 0)) > tonumber(sys.get_config("display.height", 0))
+local landscape = sys.get_config_int("display.width", 0) > sys.get_config_int("display.height", 0)
 
 local function is_landscape()
 	return landscape
