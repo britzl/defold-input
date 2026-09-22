@@ -51,11 +51,10 @@ end
 
 function on_message(self, message_id, message, sender)
 	if message_id == hash("proxy_loaded") then
-		print("disable")
-		msg.post("/menucamera", "disable")
 		msg.post(sender, "enable")
+		msg.post("camera", "disable")
 	elseif message_id == hash("proxy_unloaded") then
-		msg.post("/menucamera", "enable")
+		msg.post("camera", "enable")
 	end
 end
 

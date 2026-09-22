@@ -5,33 +5,25 @@ embedded_instances {
   data: "components {\n"
   "  id: \"keyboard\"\n"
   "  component: \"/examples/keyboard/keyboard.gui\"\n"
-  "  position {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "  }\n"
-  "  rotation {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "    w: 1.0\n"
-  "  }\n"
+  "}\n"
+  ""
+}
+embedded_instances {
+  id: "camera"
+  data: "embedded_components {\n"
+  "  id: \"camera\"\n"
+  "  type: \"camera\"\n"
+  "  data: \"aspect_ratio: 1.0\\n"
+  "fov: 0.7854\\n"
+  "near_z: -10.0\\n"
+  "far_z: 10.0\\n"
+  "orthographic_projection: 1\\n"
+  "orthographic_mode: ORTHO_MODE_AUTO_FIT\\n"
+  "\"\n"
   "}\n"
   ""
   position {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
+    x: 320.0
+    y: 568.0
   }
 }

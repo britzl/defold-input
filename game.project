@@ -2,11 +2,10 @@
 title = Defold-Input
 version = 0.1
 dependencies#0 = https://github.com/britzl/deftest/archive/2.6.0.zip
-dependencies#1 = https://github.com/britzl/defold-orthographic/archive/2.10.0.zip
 
 [bootstrap]
 main_collection = /examples/examples.collectionc
-render = /orthographic/render/orthographic.renderc
+render = /builtins/render/default.renderc
 
 [display]
 width = 640
