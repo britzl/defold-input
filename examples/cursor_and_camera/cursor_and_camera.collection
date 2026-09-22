@@ -1,27 +1,5 @@
 name: "cursor_and_camera"
 instances {
-  id: "camera"
-  prototype: "/orthographic/camera.go"
-  component_properties {
-    id: "script"
-    properties {
-      id: "projection"
-      value: "FIXED_AUTO"
-      type: PROPERTY_TYPE_HASH
-    }
-    properties {
-      id: "follow"
-      value: "true"
-      type: PROPERTY_TYPE_BOOLEAN
-    }
-    properties {
-      id: "follow_target"
-      value: "/checkpoint"
-      type: PROPERTY_TYPE_HASH
-    }
-  }
-}
-instances {
   id: "checkpoint"
   prototype: "/examples/cursor_and_camera/checkpoint.go"
   position {
@@ -135,5 +113,24 @@ embedded_instances {
     x: 13.0
     y: 9.0
     z: 1.0
+  }
+}
+embedded_instances {
+  id: "camera"
+  data: "embedded_components {\n"
+  "  id: \"camera\"\n"
+  "  type: \"camera\"\n"
+  "  data: \"aspect_ratio: 1.0\\n"
+  "fov: 0.7854\\n"
+  "near_z: -10.0\\n"
+  "far_z: 10.0\\n"
+  "orthographic_projection: 1\\n"
+  "orthographic_mode: ORTHO_MODE_AUTO_FIT\\n"
+  "\"\n"
+  "}\n"
+  ""
+  position {
+    x: 320.0
+    y: 568.0
   }
 }

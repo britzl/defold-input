@@ -22,9 +22,18 @@ local function handle_input(self, action_id, action)
 	if not action_id and action.acc_x then
 		return
 	end
-    if not action.x or not action.y then return end
-	action_pos.x = action.x
-	action_pos.y = action.y
+	if not action.x or not action.y then return end
+	local cameras = camera.get_cameras()
+	if #cameras > 0 then
+		local camera_id = cameras[#cameras] -- most recently added camera
+		local screen = vmath.vector3(action.screen_x, action.screen_y, 0)
+		local world = camera.screen_to_world(screen, camera_id)
+		action_pos.x = world.x
+		action_pos.y = world.y
+	else
+		action_pos.x = action.x
+		action_pos.y = action.y
+	end
 	self.action = action
 	-- mouse movement
 	if not action_id then

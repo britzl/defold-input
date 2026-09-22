@@ -5,18 +5,6 @@ instances {
   position {
     x: 148.0
     y: 120.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
   }
 }
 instances {
@@ -25,13 +13,6 @@ instances {
   position {
     x: 388.0
     y: 122.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
   }
   component_properties {
     id: "script"
@@ -49,11 +30,6 @@ instances {
       type: PROPERTY_TYPE_NUMBER
     }
   }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
 }
 scale_along_z: 0
 embedded_instances {
@@ -61,17 +37,6 @@ embedded_instances {
   data: "components {\n"
   "  id: \"mapper\"\n"
   "  component: \"/examples/mapper/mapper.script\"\n"
-  "  position {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "  }\n"
-  "  rotation {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "    w: 1.0\n"
-  "  }\n"
   "}\n"
   "embedded_components {\n"
   "  id: \"label\"\n"
@@ -79,37 +44,8 @@ embedded_instances {
   "  data: \"size {\\n"
   "  x: 600.0\\n"
   "  y: 32.0\\n"
-  "  z: 0.0\\n"
-  "  w: 0.0\\n"
   "}\\n"
-  "scale {\\n"
-  "  x: 1.0\\n"
-  "  y: 1.0\\n"
-  "  z: 1.0\\n"
-  "  w: 0.0\\n"
-  "}\\n"
-  "color {\\n"
-  "  x: 1.0\\n"
-  "  y: 1.0\\n"
-  "  z: 1.0\\n"
-  "  w: 1.0\\n"
-  "}\\n"
-  "outline {\\n"
-  "  x: 0.0\\n"
-  "  y: 0.0\\n"
-  "  z: 0.0\\n"
-  "  w: 1.0\\n"
-  "}\\n"
-  "shadow {\\n"
-  "  x: 0.0\\n"
-  "  y: 0.0\\n"
-  "  z: 0.0\\n"
-  "  w: 1.0\\n"
-  "}\\n"
-  "leading: 1.0\\n"
-  "tracking: 0.0\\n"
   "pivot: PIVOT_SW\\n"
-  "blend_mode: BLEND_MODE_ALPHA\\n"
   "line_break: true\\n"
   "text: \\\"Player 1: LEFT+RIGHT\\\\n"
   "\\\"\\n"
@@ -122,30 +58,26 @@ embedded_instances {
   "  position {\n"
   "    x: 21.0\n"
   "    y: 15.0\n"
-  "    z: 0.0\n"
-  "  }\n"
-  "  rotation {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "    w: 1.0\n"
   "  }\n"
   "}\n"
   ""
+}
+embedded_instances {
+  id: "camera"
+  data: "embedded_components {\n"
+  "  id: \"camera\"\n"
+  "  type: \"camera\"\n"
+  "  data: \"aspect_ratio: 1.0\\n"
+  "fov: 0.7854\\n"
+  "near_z: -10.0\\n"
+  "far_z: 10.0\\n"
+  "orthographic_projection: 1\\n"
+  "orthographic_mode: ORTHO_MODE_AUTO_FIT\\n"
+  "\"\n"
+  "}\n"
+  ""
   position {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
+    x: 320.0
+    y: 568.0
   }
 }

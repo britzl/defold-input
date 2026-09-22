@@ -5,75 +5,28 @@ embedded_instances {
   data: "components {\n"
   "  id: \"script\"\n"
   "  component: \"/examples/onscreen_gui/player.script\"\n"
-  "  position {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "  }\n"
-  "  rotation {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "    w: 1.0\n"
-  "  }\n"
-  "  property_decls {\n"
-  "  }\n"
   "}\n"
   "embedded_components {\n"
   "  id: \"sprite\"\n"
   "  type: \"sprite\"\n"
-  "  data: \"tile_set: \\\"/examples/assets/examples.atlas\\\"\\n"
-  "default_animation: \\\"playerShip3_red\\\"\\n"
+  "  data: \"default_animation: \\\"playerShip3_red\\\"\\n"
   "material: \\\"/builtins/materials/sprite.material\\\"\\n"
-  "blend_mode: BLEND_MODE_ALPHA\\n"
+  "textures {\\n"
+  "  sampler: \\\"texture_sampler\\\"\\n"
+  "  texture: \\\"/examples/assets/examples.atlas\\\"\\n"
+  "}\\n"
   "\"\n"
-  "  position {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "  }\n"
-  "  rotation {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "    w: 1.0\n"
-  "  }\n"
   "}\n"
   "embedded_components {\n"
   "  id: \"laserfactory\"\n"
   "  type: \"factory\"\n"
   "  data: \"prototype: \\\"/examples/onscreen_gui/laser.go\\\"\\n"
-  "load_dynamically: false\\n"
-  "dynamic_prototype: false\\n"
   "\"\n"
-  "  position {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "  }\n"
-  "  rotation {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "    w: 1.0\n"
-  "  }\n"
   "}\n"
   ""
   position {
     x: 320.0
     y: 568.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
   }
 }
 embedded_instances {
@@ -81,35 +34,25 @@ embedded_instances {
   data: "components {\n"
   "  id: \"gui\"\n"
   "  component: \"/examples/onscreen_gui/controls.gui\"\n"
-  "  position {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "  }\n"
-  "  rotation {\n"
-  "    x: 0.0\n"
-  "    y: 0.0\n"
-  "    z: 0.0\n"
-  "    w: 1.0\n"
-  "  }\n"
-  "  property_decls {\n"
-  "  }\n"
+  "}\n"
+  ""
+}
+embedded_instances {
+  id: "camera"
+  data: "embedded_components {\n"
+  "  id: \"camera\"\n"
+  "  type: \"camera\"\n"
+  "  data: \"aspect_ratio: 1.0\\n"
+  "fov: 0.7854\\n"
+  "near_z: -10.0\\n"
+  "far_z: 10.0\\n"
+  "orthographic_projection: 1\\n"
+  "orthographic_mode: ORTHO_MODE_AUTO_FIT\\n"
+  "\"\n"
   "}\n"
   ""
   position {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-  }
-  rotation {
-    x: 0.0
-    y: 0.0
-    z: 0.0
-    w: 1.0
-  }
-  scale3 {
-    x: 1.0
-    y: 1.0
-    z: 1.0
+    x: 320.0
+    y: 568.0
   }
 }

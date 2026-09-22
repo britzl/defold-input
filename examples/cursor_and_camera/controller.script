@@ -1,31 +1,32 @@
-local camera = require "orthographic.camera"
 local cursor = require "in.cursor"
 
-local CAMERA_ID = hash("/camera")
+local CAMERA_ID = "/camera#camera"
 
 
 function init(self)
 	msg.post(".", "acquire_input_focus")
+	self.camera_position = go.get_position(CAMERA_ID)
 end
 
 function on_input(self, action_id, action)
-	local screen = vmath.vector3(action.x, action.y, 0)
-	local world = camera.screen_to_world(CAMERA_ID, screen)
-	action.x = world.x
-	action.y = world.y
-	msg.post("#cursor", "input", { action_id = action_id, action = action })
+	if action.x and action.y then
+		local screen = vmath.vector3(action.x, action.y, 0)
+		local world = camera.screen_to_world(screen, CAMERA_ID)
+		action.x = world.x
+		action.y = world.y
+		msg.post("#cursor", "input", { action_id = action_id, action = action })
 
-	-- handle camera drag - but only if cursor isn't over something
-	if not self.over then
-		if action.pressed then
-			self.pressed_position = vmath.vector3(screen)
-			self.camera_position = go.get_position(CAMERA_ID)
-			camera.unfollow(CAMERA_ID)
-		elseif action.released then
-			self.pressed_position = nil
-		elseif self.pressed_position then
-			local diff = screen - self.pressed_position
-			go.set_position(self.camera_position - diff, CAMERA_ID)
+		-- handle camera drag - but only if cursor isn't over something
+		if not self.over then
+			if action.pressed then
+				self.pressed_position = vmath.vector3(screen)
+				self.camera_position = go.get_position(CAMERA_ID)
+			elseif action.released then
+				self.pressed_position = nil
+			elseif self.pressed_position then
+				local diff = screen - self.pressed_position
+				go.set_position(self.camera_position - diff, CAMERA_ID)
+			end
 		end
 	end
 end
@@ -48,7 +49,7 @@ function on_message(self, message_id, message, sender)
 		if message.group == hash("blue") then
 			go.delete(message.id)
 		elseif message.group == hash("checkpoint") then
-			camera.follow(CAMERA_ID, message.id, { lerp = 0.5 })
+			go.set_position(go.get_position(message.id), CAMERA_ID)
 		end
 	elseif message_id == cursor.DRAG_START then
 		print("Drag started", message.id, message.group, message.x, message.y)

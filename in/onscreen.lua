@@ -149,6 +149,8 @@ function M.create(config)
 			fn = fn,
 			settings = settings,
 			handler = handler,
+			x = 0,
+			y = 0,
 		}
 		controls[node] = control
 		return control
