@@ -11,6 +11,7 @@ go.property("drag_lock_y", false)
 go.property("collisionobject_filter", hash(""))
 go.property("acquire_input_focus", false)
 go.property("notify_own_gameobject", true)
+go.property("screen_to_world", true)
 
 local COLLISION_RESPONSE = hash("collision_response")
 local INPUT = hash("input")
@@ -24,7 +25,7 @@ local function handle_input(self, action_id, action)
 	end
 	if not action.x or not action.y then return end
 	local cameras = camera.get_cameras()
-	if #cameras > 0 then
+	if self.screen_to_world and #cameras > 0 then
 		local camera_id = cameras[#cameras] -- most recently added camera
 		local screen = vmath.vector3(action.screen_x, action.screen_y, 0)
 		local world = camera.screen_to_world(screen, camera_id)

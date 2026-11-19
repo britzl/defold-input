@@ -17,6 +17,7 @@ The script has the following [script properties](https://defold.com/manuals/scri
 * `collisionobject_filter` - (hash) Id of a collision object component. If specified the cursor script will only accept collision messages from this id.
 * `acquire_input_focus` - (boolean) Check if the script should acquire input and handle input events itself
 * `notify_own_gameobject` - (boolean) Check if cursor messages should be sent not only to the interacting game object but also to the game object this script is attached to.
+* `screen_to_world` - (boolean) Check if the screen position of an input event should be converted to world coordinates using the most recently added camera component (default: true). Uncheck it if the app converts the coordinates itself and passes them in `action.x` and `action.y` of `input` messages.
 
 NOTE: If both `drag_lock_x` and `drag_lock_y` are set the game object will be locked to the nearest axis when the drag operation was started.
 
@@ -24,7 +25,7 @@ NOTE: If both `drag_lock_x` and `drag_lock_y` are set the game object will be lo
 You can let the cursor react to input in several ways:
 
 * Enable the `acquire_input_focus` property. This will make the script automatically respond to input events. If this isn't checked any `on_input()` calls are completely ignored.
-* Pass `input` messages. This will feed input events from an external source. This is useful if the app uses a camera solution or render script where screen coordinates doesn't translate to world coordinates and where conversion is required (using a screen_to_world function or similar). The `input` message is expected to have two fields; `action_id` and `action` in the same way as the `on_input` lifecycle function works.
+* Pass `input` messages. This will feed input events from an external source. This is useful if the app uses a camera solution or render script where screen coordinates doesn't translate to world coordinates and where conversion is required (using a screen_to_world function or similar). The `input` message is expected to have two fields; `action_id` and `action` in the same way as the `on_input` lifecycle function works. Uncheck `screen_to_world` if `action.x` and `action.y` are already converted, otherwise they are replaced by `action.screen_x` and `action.screen_y` converted using the most recently added camera.
 
 ## Messages
 The script will generate messages to game objects the cursor is interacting with and to the game object the cursor script is attached to for the following situations:
