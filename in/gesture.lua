@@ -256,12 +256,12 @@ function M.create(settings)
 		elseif s1.is_long_press and s2.is_long_press then
 			gestures.two_finger.long_press = true
 		elseif s1.is_swipe and s2.is_swipe then
-			gestures.two_finger_swipe_released = not s1.pressed and not s2.pressed
+			gestures.two_finger.swipe_released = not s1.pressed and not s2.pressed
 			gestures.two_finger.swipe_up = s1.swipe_up and s2.swipe_up
 			gestures.two_finger.swipe_down = s1.swipe_down and s2.swipe_down
 			gestures.two_finger.swipe_right = s1.swipe_right and s2.swipe_right
 			gestures.two_finger.swipe_left = s1.swipe_left and s2.swipe_left
-		elseif s1.is_repeated and s1.is_repeated then
+		elseif s1.is_repeated and s2.is_repeated then
 			gestures.two_finger.repeated = true
 		else
 			local pressed1 = s1.pressed_position
@@ -286,7 +286,8 @@ function M.create(settings)
 				if #action.touch == 2 then
 					local t1 = action.touch[1]
 					local t2 = action.touch[2]
-					if current_touch_count < 2 then
+					if current_touch_count ~= 2 or not multi_states[t1.id] or not multi_states[t2.id] then
+						multi_states = {}
 						multi_states[t1.id] = create_touch_state()
 						multi_states[t2.id] = create_touch_state()
 						t1.pressed = true
